@@ -1,0 +1,30 @@
+<html>
+<head>
+
+    <script src="../node_modules/systemjs/dist/system.src.js"></script>
+    <script src="../node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="../node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="../node_modules/angular2/bundles/http.dev.js"></script>
+    <script>
+        System.config({
+            packages: {'app/component': {defaultExtension: 'js'},
+            'app/service': {defaultExtension: 'js'},
+            'app/api': {defaultExtension: 'js'},
+            'app/factory': {defaultExtension: 'js'},
+            'app/DTO': {defaultExtension: 'js'}},
+            'app/view': {defaultExtension: 'html'}
+        });
+        System.import('/app/component/app');
+    </script>
+</head>
+<body>
+
+<app>loading</app>
+
+
+
+</body>
+</html>
+
+
+

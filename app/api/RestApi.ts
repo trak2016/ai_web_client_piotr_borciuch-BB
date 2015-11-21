@@ -1,68 +1,70 @@
-import {Http, Headers, Response} from 'angular2/http';
+import {Headers, Response, Http, HTTP_BINDINGS, RequestMethods} from 'angular2/http';
 import {IDto} from '../DTO/IDto';
-import {Token} from './Token'
-import {ResponseHandler} from './ResponseHandler';
+import {Inject, Injectable} from 'angular2/angular2';
+import {Service as ResponseHandler} from "../service/service";
 
+@Injectable()
 export class RestApi {
     private http: Http;
-    private headers: Headers;
-    private responseHandler: ResponseHandler;
-    private token: Token;
+    private SERVLET_CONTEXT: string = "http://localhost:8333/Restaurant/";
 
-    constructor(http: Http){
+    constructor(@Inject (Http)http: Http){
+
         this.http = http;
-        this.prepareDefaultHeaders();
     }
 
-    postRequest(url: string, object: IDto){
-        this.token = Token.getInstance();
-        this.addHeader(this.token.name, this.token.value);
-        return this.http.post(url, object.toJson(), {
-            headers: this.headers
-        })
+    postRequest(url: string, object: IDto, handler: ResponseHandler){
+
+        this.http.post(this.SERVLET_CONTEXT + url, object.toJson(), {headers: this.prepareDefaultHeaders()})
         .subscribe((response: Response) => {
+            handler.handle(response);
             this.doAction(response);
         })
 
+
     }
 
-    putRequest(url: string, object: IDto){
-        this.token = Token.getInstance();
-        this.addHeader(this.token.name, this.token.value);
-        return this.http.put(url, object.toJson(), {
-            headers: this.headers
-        })
+    putRequest(url: string, object: IDto, handler: ResponseHandler){
+        this.http.put(url, object.toJson(), {headers: this.prepareDefaultHeaders()})
             .subscribe((response: Response) => {
+                handler.handle(response);
                 this.doAction(response);
             })
+
     }
 
-    getRequest(url: string, onSuccess) {
-        this.token = Token.getInstance();
-        this.addHeader(this.token.name, this.token.value);
-        return this.http.get(url, {
-            headers: this.headers
-        })
+    getRequest(url: string, handler: ResponseHandler) {
+
+        this.http.get(url, {headers: this.prepareDefaultHeaders()})
             .subscribe((response: Response) => {
+                handler.handle(response);
                 this.doAction(response);
             })
+
     }
 
-    public registerHandler(handler: ResponseHandler){
-        this.responseHandler = handler;
+
+    private prepareDefaultHeaders(): Headers{
+        let headers: Headers = new Headers();
+        headers.set("Content-Type", "application/text");
+        let tokenValue = this.getAuthToken()
+        if(tokenValue != "null")
+            headers.set("Restaurant-Auth-Token", tokenValue)
+        return headers;
     }
 
-    private prepareDefaultHeaders(){
-        this.headers = new Headers();
-    }
 
-    private addHeader(name: string, value: string){
-        this.headers.append(name, value);
-    }
 
     private doAction(response: Response){
-        this.token.value = response.headers.get(this.token.name);
-        this.responseHandler.handleResponse(response);
+        this.setAuthToken(response.headers.get("Restaurant-Auth-Token"))
+    }
+
+    private getAuthToken(){
+        return localStorage.getItem("authToken");
+    }
+
+    private setAuthToken(token: string){
+        localStorage.setItem("authToken", token);
     }
 
 }

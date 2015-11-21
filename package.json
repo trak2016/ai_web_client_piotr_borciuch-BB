@@ -4,7 +4,7 @@
   "description": "This project is an application skeleton for a typical [AngularJS](http://angularjs.org/) web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.",
   "scripts": {
     "tsc": "tsc -w",
-    "start": "live-server --open=app/",
+    "start": "live-server --open=/",
     "test": "live-server --open=tests/"
   },
   "repository": {
@@ -17,7 +17,8 @@
   "homepage": "https://bitbucket.org/Borcz/ai_web_client_piotr_borciuch#readme",
   "dependencies": {
     "angular2": "2.0.0-alpha.44",
-    "systemjs": "0.19.2"
+    "systemjs": "0.19.2",
+    "angular2-jwt": "0.1.2"
   },
   "devDependencies": {
     "jasmine-core": "2.3.4",
@@ -27,6 +28,6 @@
   "main": "index.js",
   "directories": {
     "app": "app",
-    "test": "tests"
+    "tests": "tests"
   }
 }

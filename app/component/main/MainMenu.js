@@ -9,21 +9,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+/**
+ * Created by test on 2015-11-15.
+ */
 var angular2_1 = require('angular2/angular2');
-var App = (function () {
-    function App() {
+var router_1 = require('angular2/router');
+var MainMenu = (function () {
+    function MainMenu() {
+        this.login = this.getLogin();
     }
-    App = __decorate([
+    MainMenu.prototype.getLogin = function () {
+        return localStorage.getItem('userLogin');
+    };
+    MainMenu.prototype.isLogged = function () {
+        return localStorage.getItem("userData") != null;
+    };
+    MainMenu = __decorate([
         angular2_1.Component({
-            selector: 'app'
+            selector: 'mainmenu'
         }),
         angular2_1.View({
-            template: '<p>{{"pleple" + " wreszcie działa"}}</p>',
+            templateUrl: './app/view/main.html',
+            directives: [router_1.ROUTER_DIRECTIVES],
         }), 
         __metadata('design:paramtypes', [])
-    ], App);
-    return App;
+    ], MainMenu);
+    return MainMenu;
 })();
-exports.App = App;
-angular2_1.bootstrap(App);
-//# sourceMappingURL=app.js.map
+exports.MainMenu = MainMenu;
+//# sourceMappingURL=MainMenu.js.map
