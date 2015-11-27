@@ -1,9 +1,9 @@
 import {Injectable, Inject} from 'angular2/angular2'
 import {RestApi} from "../../api/RestApi";
-import {IDto} from "../../DTO/IDto";
+import {IDto, AuthDTO, EmployeeDTO} from "../../DTO/IDto";
 import {Response} from 'angular2/http'
-import {ActionHandler} from "../ActionHandler";
 import {Service} from "../Service";
+
 
 @Injectable()
 export class LoginService extends Service{
@@ -23,20 +23,16 @@ export class LoginService extends Service{
     }
 
 
-}
-
-
-class AuthDTO implements IDto {
-    private login: string;
-    private password: string;
-
-    constructor(login: string, password: string){
-        this.login = login;
-        this.password = password;
-    }
-
-
-    toJson():string {
-        return JSON.stringify(this);
+    handle(response:Response) {
+       if(response.status == 200){
+           let employeeData: EmployeeDTO = new EmployeeDTO(response.json());
+           localStorage.setItem('userLogin', employeeData.login);
+           localStorage.setItem('userPrivileges', employeeData.getPrivileges().toString());
+           this.actionHandler.handleObject(employeeData);
+       }else{
+           this.actionHandler.handleError(this.mapError(response.json()));
+       }
     }
 }
+
+

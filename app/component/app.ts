@@ -6,6 +6,7 @@ import {LoginService} from "../service/login/LoginService";
 import {RestApi} from "../api/RestApi";
 import {LoginComponent} from "./login/LoginComponent";
 import {AuthRouting} from './routing/AuthRouting'
+import {EmployeesComponent} from "./employees/EmployeesComponent";
 
 @Component({
     selector: 'app'
@@ -21,16 +22,26 @@ import {AuthRouting} from './routing/AuthRouting'
     [
 
         {path: '/main', component: MainMenu, as: 'MainMenu'},
-        {path: '/login', component: LoginComponent, as: 'LoginComponent'}
+        {path: '/login', component: LoginComponent, as: 'LoginComponent'},
+        {path: '/employees', component: EmployeesComponent, as: 'EmployeesComponent'}
 
     ]
 )
 export class App {
 
-
+    private salutation: string;
 
     constructor(public router: Router) {
+        this.salutation = "";
         router.navigateByUrl('/login');
+    }
+
+    public setSalutation(salutation: string) {
+        this.salutation = salutation;
+    }
+
+    public back(){
+        this.router.renavigate();
     }
 
 }

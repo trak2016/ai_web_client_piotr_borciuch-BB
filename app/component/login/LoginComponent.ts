@@ -1,10 +1,12 @@
 import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject} from 'angular2/angular2';
 import {Router, Route, RouteConfig} from 'angular2/router';
 import {LoginService} from '../../service/login/LoginService';
-import {Error} from "../../DTO/IDto";
 import {MainMenu} from "../main/MainMenu";
 import {RestApi} from "../../api/RestApi";
-import {ActionHandler} from "../../service/ActionHandler";
+import {IDto, Error} from "../../dto/IDto";
+import {App} from "../app";
+import {Handler} from "../../handler/Handler";
+import {EmployeeDTO} from "../../DTO/IDto";
 
 
 
@@ -23,16 +25,19 @@ import {ActionHandler} from "../../service/ActionHandler";
 )
 
 
-export class LoginComponent implements ActionHandler{
+export class LoginComponent implements Handler{
+
 
     private router: Router;
     private loginService: LoginService;
     public login: string;
     public password: string;
-    private error: Object;
+    private errors: Array<Error>;
+    private app: App;
 
-    constructor(@Inject(LoginService)loginService: LoginService, router: Router){
-        this.error = [];
+    constructor(app: App,@Inject(LoginService)loginService: LoginService, router: Router){
+        this.app = app;
+        this.errors = [];
         this.loginService = loginService;
         this.login = "";
         this.password = "";
@@ -42,41 +47,27 @@ export class LoginComponent implements ActionHandler{
     }
 
     public onLogin(){
-        this.error = [];
+        this.errors = [];
         this.loginService.login(this.login, this.password);
 
     }
 
+    handleVoid() {
+    }
 
-    onSuccess(json: Object) {
-        let employeeData: EmployeeData = new EmployeeData(json);
-        localStorage.setItem('userLogin', employeeData.login);
-        localStorage.setItem('userPrivileges', employeeData.getPrivileges().toString());
+    handleError(errors:Array<Error>) {
+        this.errors = errors;
+    }
+
+    handleObject(dto:EmployeeDTO) {
+        this.app.setSalutation("Witaj " + dto.login);
         this.router.parent.navigateByUrl('/main');
     }
 
-    onFailed(error: Object) {
-        this.error = error;
+    handleArray(dtos:Array<IDto>) {
     }
+
 }
 
-class EmployeeData{
-    public login: string;
-    private roles: Array<Object>;
 
-    constructor(json: Object){
-        this.login = json['authenticationData']['login'];
-        this.roles = json['roles'];
-    }
-
-    getPrivileges(): string[]{
-        let privileges: string[] = new Array(this.roles.length);
-        for(let role in this.roles){
-            privileges.push(role["name"]);
-        }
-        return privileges;
-    }
-
-
-}
 

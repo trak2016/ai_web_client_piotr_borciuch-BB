@@ -1,0 +1,12 @@
+<table>
+    <thead>
+        <tr>
+            <td *ng-for="#column of columns"><a (click)="sort(column.id)">{{column.name}}</a></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ng-for="#row of rows">
+            <td *ng-for="#column of columns">{{row[column.id]}}</td>
+        </tr>
+    </tbody>
+</table>

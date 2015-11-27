@@ -18,15 +18,8 @@ export class MainMenu{
     public login: string;
 
     constructor() {
-        this.login = this.getLogin();
+
     }
 
-    public getLogin():string{
-        return localStorage.getItem('userLogin');
-    }
-
-    public isLogged():boolean{
-        return localStorage.getItem("userData") != null;
-    }
 }
 

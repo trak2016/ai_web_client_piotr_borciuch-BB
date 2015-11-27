@@ -17,8 +17,9 @@
   "homepage": "https://bitbucket.org/Borcz/ai_web_client_piotr_borciuch#readme",
   "dependencies": {
     "angular2": "2.0.0-alpha.44",
-    "systemjs": "0.19.2",
-    "angular2-jwt": "0.1.2"
+    "angular2-jwt": "0.1.2",
+    "ng2-table": "0.0.0",
+    "systemjs": "0.19.2"
   },
   "devDependencies": {
     "jasmine-core": "2.3.4",
