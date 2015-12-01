@@ -1,27 +1,111 @@
 var Error = (function () {
     function Error(json) {
-        this._errors = [];
         if (json != null) {
-            this.setErrors(json);
+            this.message = json["message"];
         }
     }
-    Error.prototype.setErrors = function (json) {
-        this._errors = new Array();
-    };
-    Object.defineProperty(Error.prototype, "errors", {
-        get: function () {
-            return this._errors;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Error.prototype.clearErrors = function () {
-        this._errors = [];
-    };
     Error.prototype.toJson = function () {
         return null;
     };
     return Error;
 })();
 exports.Error = Error;
+var AuthDTO = (function () {
+    function AuthDTO(login, password) {
+        this.login = login;
+        this.password = password;
+    }
+    AuthDTO.prototype.getLogin = function () {
+        return this.login;
+    };
+    AuthDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return AuthDTO;
+})();
+exports.AuthDTO = AuthDTO;
+var EmployeeDTO = (function () {
+    function EmployeeDTO(json) {
+        this.id = 0;
+        this.name = "";
+        this.surname = "";
+        this.status = "";
+        if (json != null) {
+            this.id = json["id"];
+            this.authenticationData = new AuthDTO(json['authenticationData']['login'], "");
+            this.createRoles(json['roles']);
+            this.name = json['name'];
+            this.surname = json['surname'];
+            this.position = new PositionDTO(json['position']);
+            this.status = json["status"];
+        }
+        else {
+            this.roles = [];
+            this.position = new PositionDTO(null);
+        }
+    }
+    EmployeeDTO.prototype.createRoles = function (rolesJson) {
+        this.roles = new Array();
+        for (var i = 0; i < rolesJson.length; i++) {
+            this.roles.push(new RoleDTO(rolesJson[i]));
+        }
+    };
+    EmployeeDTO.prototype.getPosition = function () {
+        return this.position.name;
+    };
+    EmployeeDTO.prototype.getLogin = function () {
+        return this.authenticationData.getLogin();
+    };
+    EmployeeDTO.prototype.setAuthenticationData = function (login, password) {
+        this.authenticationData = new AuthDTO(login, password);
+    };
+    EmployeeDTO.prototype.getPrivileges = function () {
+        var privileges = new Array(this.roles.length);
+        for (var i = 0; i < this.roles.length; i++) {
+            privileges.push(this.roles[i].name);
+        }
+        return privileges;
+    };
+    EmployeeDTO.prototype.createRoleFromPrivileges = function (privileges) {
+        this.roles = new Array();
+        for (var i = 0; i < privileges.length; i++) {
+            var role = new RoleDTO(null);
+            role.name = privileges[i];
+            this.roles.push(role);
+        }
+    };
+    EmployeeDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return EmployeeDTO;
+})();
+exports.EmployeeDTO = EmployeeDTO;
+var PositionDTO = (function () {
+    function PositionDTO(json) {
+        this.id = 0;
+        this.name = "";
+        if (json != null) {
+            this.id = json["id"];
+            this.name = json["name"];
+        }
+    }
+    PositionDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return PositionDTO;
+})();
+exports.PositionDTO = PositionDTO;
+var RoleDTO = (function () {
+    function RoleDTO(json) {
+        if (json != null) {
+            this.name = json["name"];
+            this.id = json["id"];
+            this.employeeId = json["employeeId"];
+        }
+    }
+    RoleDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return RoleDTO;
+})();
 //# sourceMappingURL=IDto.js.map

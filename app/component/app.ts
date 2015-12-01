@@ -1,12 +1,16 @@
-import {Component, View, bootstrap, bind} from 'angular2/angular2';
+import {Component, View, bootstrap, bind,provide, Inject, Injectable, CORE_DIRECTIVES} from 'angular2/angular2';
 import {HTTP_PROVIDERS} from 'angular2/http'
-import {APP_BASE_HREF, Location,Router, RouteConfig, RouterLink, RouterOutlet, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from 'angular2/router';
+import {APP_BASE_HREF, Location, LocationStrategy, HashLocationStrategy,
+    Router, RouteConfig, RouterLink, RouterOutlet, ROUTER_PRIMARY_COMPONENT,
+    ROUTER_DIRECTIVES, ROUTER_PROVIDERS, Route} from 'angular2/router';
 import {MainMenu} from './main/MainMenu'
 import {LoginService} from "../service/login/LoginService";
 import {RestApi} from "../api/RestApi";
 import {LoginComponent} from "./login/LoginComponent";
 import {AuthRouting} from './routing/AuthRouting'
 import {EmployeesComponent} from "./employees/EmployeesComponent";
+import {Error} from "../DTO/IDto";
+import {SharedMemory} from "../shared/SharedMemory"
 
 @Component({
     selector: 'app'
@@ -14,36 +18,44 @@ import {EmployeesComponent} from "./employees/EmployeesComponent";
 @View(
     {
         templateUrl: './app/view/app.html',
-        directives: [ROUTER_DIRECTIVES, MainMenu, AuthRouting],
+        directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, MainMenu, AuthRouting],
     }
 )
 
 @RouteConfig(
     [
-
-        {path: '/main', component: MainMenu, as: 'MainMenu'},
-        {path: '/login', component: LoginComponent, as: 'LoginComponent'},
-        {path: '/employees', component: EmployeesComponent, as: 'EmployeesComponent'}
+        new Route({path: '/', component: MainMenu, name: 'Main'}),
+        new Route({path: '/main', component: MainMenu, name: 'Main'}),
+        new Route({path: '/login', component: LoginComponent, name: 'Login'}),
+        new Route({path: '/employees', component: EmployeesComponent, name: 'Employees'})
 
     ]
 )
 export class App {
 
-    private salutation: string;
+    sharedMemory: SharedMemory;
 
-    constructor(public router: Router) {
-        this.salutation = "";
-        router.navigateByUrl('/login');
-    }
-
-    public setSalutation(salutation: string) {
-        this.salutation = salutation;
+    constructor(public router: Router, sharedMemory: SharedMemory) {
+        this.sharedMemory = sharedMemory;
+        this.router.navigate(['/Main']);
     }
 
     public back(){
         this.router.renavigate();
+
+    }
+
+    public logout(){
+        sessionStorage.clear();
+        this.sharedMemory.clear();
+        this.router.navigate(['/Login']);
     }
 
 }
-bootstrap(App, [bind(APP_BASE_HREF).toValue('/'), RestApi, HTTP_PROVIDERS, ROUTER_DIRECTIVES, ROUTER_PROVIDERS]);
+
+
+bootstrap(App, [provide(LocationStrategy, {useClass: HashLocationStrategy}),
+    provide(ROUTER_PRIMARY_COMPONENT, {useValue: App}),
+    provide(APP_BASE_HREF,{useValue: '/#/'}),
+    RestApi, HTTP_PROVIDERS, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, SharedMemory]);
 

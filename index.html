@@ -7,12 +7,14 @@
     <script src="../node_modules/angular2/bundles/http.dev.js"></script>
     <script>
         System.config({
-            packages: {'app/component': {defaultExtension: 'js'},
-            'app/service': {defaultExtension: 'js'},
-            'app/api': {defaultExtension: 'js'},
-            'app/factory': {defaultExtension: 'js'},
-            'app/DTO': {defaultExtension: 'js'}},
-            'app/view': {defaultExtension: 'html'}
+            packages: {'app/shared': {defaultExtension: 'js'},
+
+                'app/component': {defaultExtension: 'js'},
+                'app/service': {defaultExtension: 'js'},
+                'app/api': {defaultExtension: 'js'},
+                'app/factory': {defaultExtension: 'js'},
+                'app/DTO': {defaultExtension: 'js'}},
+                'app/view': {defaultExtension: 'html'}
         });
         System.import('/app/component/app');
     </script>

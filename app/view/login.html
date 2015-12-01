@@ -1,8 +1,4 @@
-<div class="error">
-    <ul>
-        <li *ng-for="#item of error">{{item.message}}</li>
-    </ul>
-</div>
+
 
 <form (ng-submit)="onLogin()" #hf="form">
 
@@ -18,5 +14,4 @@
            [(ng-model)]="password" ng-control="password" #name="form">
 </div>
     <button type="submit" class="form_button">Zaloguj</button>
-</form>
 </form>

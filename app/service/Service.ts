@@ -3,23 +3,40 @@
  */
     import  {Response} from 'angular2/http';
 import {Error} from "../DTO/IDto";
-import {Handler} from "../handler/Handler";
+import {VoidHandler, ObjectHandler, ErrorsHandler, ArrayHandler} from "../handler/Handler";
 import {IDto} from "../DTO/IDto";
-import {Array} from "../../../../../../Program Files (x86)/JetBrains/WebStorm 11.0/plugins/JavaScriptLanguage/typescriptCompiler/external/lib";
 export class Service{
-    protected actionHandler: Handler;
+
+    protected voidHandler: VoidHandler;
+    protected errorHandler: ErrorsHandler;
+    protected objectHandler: ObjectHandler;
+    protected arrayHandler: ArrayHandler;
 
     handle(response: Response){}
 
-    registerHandler(handler: Handler){
-        this.actionHandler = handler;
+    registerVoidHandler(handler: VoidHandler){
+        this.voidHandler = handler;
     }
 
-    protected mapError(json: Object): Array<Error>{
+    registerErrorsHandler(handler: ErrorsHandler){
+        this.errorHandler = handler;
+    }
+
+    registerObjectHandler(handler: ObjectHandler){
+        this.objectHandler = handler;
+    }
+
+    registerArrayHandler(handler: ArrayHandler){
+        this.arrayHandler = handler;
+    }
+
+    protected mapError(json: Array<any>): Array<Error>{
         let errors: Array<Error> = new Array();
-        for(let object in json){
-            errors.push(new Error(object));
+        for(let i = 0; i < json.length; i++){
+            errors.push(new Error(json[i]));
+            console.log("element " + json[i]["message"]);
         }
+        console.log(errors);
         return errors;
 
     }

@@ -1,4 +1,6 @@
-<button [router-link]="['./employees']">Zarządzaj pracownikami</button>
-<button [router-link]="['./menu']">Zarządzaj menu restauracji</button>
-<button [router-link]="['./room']">Zarządzaj salą</button>
-<button [router-link]="['./restaurant']">Zarządzaj restauracją</button>
+<div *ng-if="hasAdminRole">
+    <button [router-link]="['/Employees']">Zarządzaj pracownikami</button>
+    <button >Zarządzaj menu restauracji</button>
+    <button >Zarządzaj salą</button>
+    <button >Zarządzaj restauracją</button>
+</div>

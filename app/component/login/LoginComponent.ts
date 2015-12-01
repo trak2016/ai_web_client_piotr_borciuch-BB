@@ -1,19 +1,18 @@
-import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject} from 'angular2/angular2';
+import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject, Host} from 'angular2/angular2';
 import {Router, Route, RouteConfig} from 'angular2/router';
 import {LoginService} from '../../service/login/LoginService';
 import {MainMenu} from "../main/MainMenu";
 import {RestApi} from "../../api/RestApi";
-import {IDto, Error} from "../../dto/IDto";
+import {IDto, Error} from "../../DTO/IDto";
 import {App} from "../app";
-import {Handler} from "../../handler/Handler";
+import {ErrorsHandler, ObjectHandler} from "../../handler/Handler";
 import {EmployeeDTO} from "../../DTO/IDto";
-
-
+import {SharedMemory} from "../../shared/SharedMemory"
 
 
 
 @Component({
-    selector: 'logincomponent',
+    selector: 'login',
     providers: [LoginService],
 
 })
@@ -24,47 +23,54 @@ import {EmployeeDTO} from "../../DTO/IDto";
     }
 )
 
+export class LoginComponent{
 
-export class LoginComponent implements Handler{
-
-
+    private sharedMemory: SharedMemory;
     private router: Router;
     private loginService: LoginService;
     public login: string;
     public password: string;
-    private errors: Array<Error>;
-    private app: App;
 
-    constructor(app: App,@Inject(LoginService)loginService: LoginService, router: Router){
-        this.app = app;
-        this.errors = [];
+    constructor(loginService: LoginService, router: Router, sharedMemory: SharedMemory){
+        this.sharedMemory = sharedMemory;
         this.loginService = loginService;
         this.login = "";
         this.password = "";
-        this.loginService.registerHandler(this);
+        this.registerHandlers();
         this.router = router;
-
     }
 
     public onLogin(){
-        this.errors = [];
+        this.sharedMemory.appErrors = [];
         this.loginService.login(this.login, this.password);
 
     }
 
-    handleVoid() {
-    }
-
     handleError(errors:Array<Error>) {
-        this.errors = errors;
+
+        for(let item in errors)
+            console.log(item.message);
+        this.sharedMemory.appErrors = errors;
     }
 
     handleObject(dto:EmployeeDTO) {
-        this.app.setSalutation("Witaj " + dto.login);
+        this.sharedMemory.userLogin = sessionStorage.getItem("userLogin");
+        this.sharedMemory.userPrivileges = sessionStorage.getItem("userPrivileges");
         this.router.parent.navigateByUrl('/main');
     }
 
-    handleArray(dtos:Array<IDto>) {
+
+    private registerHandlers(){
+
+        let objectHandler: ObjectHandler =  {
+            handle: (object: EmployeeDTO) => this.handleObject(object)
+        }
+        let errorsHandler: ErrorsHandler =  {
+            handle: (errors: Array<Error>) => this.handleError(errors)
+        }
+        this.loginService.registerErrorsHandler(errorsHandler);
+        this.loginService.registerObjectHandler(objectHandler);
+
     }
 
 }

@@ -3,16 +3,17 @@ import {RestApi} from "../../api/RestApi";
 import {IDto, AuthDTO, EmployeeDTO} from "../../DTO/IDto";
 import {Response} from 'angular2/http'
 import {Service} from "../Service";
+import {SharedMemory} from "../../shared/SharedMemory";
 
 
-@Injectable()
 export class LoginService extends Service{
 
-    private restApi: RestApi
+    private restApi: RestApi;
+    private sharedMemory: SharedMemory;
 
-
-    constructor(@Inject(RestApi) restApi: RestApi){
+    constructor(@Inject(RestApi)restApi: RestApi,@Inject(SharedMemory) sharedMemeory: SharedMemory){
         super();
+        this.sharedMemory = sharedMemeory;
         this.restApi = restApi;
 
     }
@@ -24,14 +25,28 @@ export class LoginService extends Service{
 
 
     handle(response:Response) {
+        console.log(response.text());
        if(response.status == 200){
            let employeeData: EmployeeDTO = new EmployeeDTO(response.json());
-           localStorage.setItem('userLogin', employeeData.login);
-           localStorage.setItem('userPrivileges', employeeData.getPrivileges().toString());
-           this.actionHandler.handleObject(employeeData);
+           this.putUserDataInMemory(employeeData);
+           this.objectHandler.handle(employeeData);
        }else{
-           this.actionHandler.handleError(this.mapError(response.json()));
+           this.errorHandler.handle(this.mapError(JSON.parse(response.text())));
        }
+    }
+
+    private putUserDataInMemory(employeeData: EmployeeDTO){
+        sessionStorage.setItem("userLogin", employeeData.getLogin());
+        let privileges: Array<string> = employeeData.getPrivileges();
+        let cook: string = privileges.indexOf("COOK") >= 0 ? '0001' : '0000';
+        let waiter: string = privileges.indexOf("WAITER") >= 0 ? '0010' : '0000';
+        let manager: string = privileges.indexOf("MANAGER") >= 0 ? '0100' : '0000';
+        let owner: string = privileges.indexOf("OWNER") >= 0 ? '1000' : '0000';
+        let privilegesValue: string = (parseInt(cook, 2) | parseInt(waiter, 2) |
+                parseInt(manager, 2) | parseInt(owner, 2)).toString();
+
+        sessionStorage.setItem("userPrivileges", privilegesValue);
+
     }
 }
 

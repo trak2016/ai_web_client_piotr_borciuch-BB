@@ -6,7 +6,7 @@
     </thead>
     <tbody>
         <tr *ng-for="#row of rows">
-            <td *ng-for="#column of columns">{{row[column.id]}}</td>
+            <td *ng-for="#cell of row.cells" (click)="onSelectedRow(row)">{{cell.value}}</td>
         </tr>
     </tbody>
 </table>

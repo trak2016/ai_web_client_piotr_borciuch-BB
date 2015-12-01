@@ -29,13 +29,12 @@ var AuthRouting = (function (_super) {
         this.parentRouter = _parentRouter;
         this.publicRoutes = {
             '/login': true,
-            '/signup': true
         };
     }
     AuthRouting.prototype.activate = function (instruction) {
         var url = this.parentRouter.lastNavigationAttempt;
-        if (!this.publicRoutes[url] && localStorage.getItem('userLogin') == null) {
-            this.parentRouter.navigateByUrl('/login');
+        if (!this.publicRoutes[url] && sessionStorage.getItem("userLogin") == null) {
+            this.parentRouter.navigate(['/Login']);
         }
         return _super.prototype.activate.call(this, instruction);
     };

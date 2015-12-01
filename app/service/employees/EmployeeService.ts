@@ -2,14 +2,14 @@ import {Service} from "./../Service";
 import {RestApi} from "../../api/RestApi";
 import {Inject, Injectable} from "angular2/angular2";
 import {Response} from "angular2/http"
-import {IDto, EmployeeDTO} from "../../dto/IDto"
+import {IDto, EmployeeDTO} from "../../DTO/IDto"
 
-@Injectable()
 export class EmployeeService extends Service{
 
     private restApi: RestApi;
 
-    constructor(@Inject (RestApi) restApi: RestApi){
+    constructor(@Inject(RestApi)restApi: RestApi){
+        super();
         this.restApi = restApi;
     }
 
@@ -26,28 +26,29 @@ export class EmployeeService extends Service{
     }
 
     public changeEmployeeStatus(employee: EmployeeDTO){
-        this.restApi.putRequest("employees/employee" + employee.login, null, this);
+        this.restApi.putRequest("employees/employee" + employee.getLogin(), null, this);
     }
 
     handle(response:Response) {
         if(response.status == 200){
             if(response.json() != null){
-                return this.actionHandler.handleArray(this.mapObjects(response.json()));
+                return this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }else{
                 this.getAllEmployees();
             }
         }else if(response.status == 201){
             this.getAllEmployees();
         }else{
-            this.actionHandler.handleError(this.mapError(response.json()));
+            this.errorHandler.handle(this.mapError(JSON.parse(response.text())));
         }
 
     }
 
-    private mapObjects(json: Object): Array<EmployeeDTO>{
+    private mapObjects(json: Array<any>): Array<EmployeeDTO>{
         let objects: Array<EmployeeDTO> = new Array();
-        for(let object in json){
-            objects.push(new EmployeeDTO(object));
+
+        for(let i = 0; i < json.length; i++){
+            objects.push(new EmployeeDTO(json[i]));
         }
         return objects;
     }

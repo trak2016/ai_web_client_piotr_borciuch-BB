@@ -4,6 +4,7 @@
 import {Directive, Attribute, ElementRef, DynamicComponentLoader} from 'angular2/angular2';
 import {Router, RouterOutlet, ComponentInstruction} from 'angular2/router';
 import {LoginComponent} from "../login/LoginComponent";
+import {SharedMemory} from "../../shared/SharedMemory";
 
 @Directive({selector: 'auth-routing'})
 export class AuthRouting extends RouterOutlet {
@@ -18,14 +19,13 @@ export class AuthRouting extends RouterOutlet {
         this.parentRouter = _parentRouter;
         this.publicRoutes = {
             '/login': true,
-            '/signup': true
         };
     }
 
     activate(instruction: ComponentInstruction) {
         var url = this.parentRouter.lastNavigationAttempt;
-        if (!this.publicRoutes[url] && localStorage.getItem('userLogin') == null) {
-            this.parentRouter.navigateByUrl('/login');
+        if (!this.publicRoutes[url] && sessionStorage.getItem("userLogin") == null) {
+            this.parentRouter.navigate(['/Login']);
         }
         return super.activate(instruction);
     }

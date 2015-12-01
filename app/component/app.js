@@ -16,27 +16,43 @@ var MainMenu_1 = require('./main/MainMenu');
 var RestApi_1 = require("../api/RestApi");
 var LoginComponent_1 = require("./login/LoginComponent");
 var AuthRouting_1 = require('./routing/AuthRouting');
+var EmployeesComponent_1 = require("./employees/EmployeesComponent");
+var SharedMemory_1 = require("../shared/SharedMemory");
 var App = (function () {
-    function App(router) {
+    function App(router, sharedMemory) {
         this.router = router;
-        router.navigateByUrl('/login');
+        this.sharedMemory = sharedMemory;
+        this.router.navigate(['/Main']);
     }
+    App.prototype.back = function () {
+        this.router.renavigate();
+    };
+    App.prototype.logout = function () {
+        sessionStorage.clear();
+        this.sharedMemory.clear();
+        this.router.navigate(['/Login']);
+    };
     App = __decorate([
         angular2_1.Component({
             selector: 'app'
         }),
         angular2_1.View({
             templateUrl: './app/view/app.html',
-            directives: [router_1.ROUTER_DIRECTIVES, MainMenu_1.MainMenu, AuthRouting_1.AuthRouting],
+            directives: [router_1.ROUTER_DIRECTIVES, angular2_1.CORE_DIRECTIVES, MainMenu_1.MainMenu, AuthRouting_1.AuthRouting],
         }),
         router_1.RouteConfig([
-            { path: '/main', component: MainMenu_1.MainMenu, as: 'MainMenu' },
-            { path: '/login', component: LoginComponent_1.LoginComponent, as: 'LoginComponent' }
+            new router_1.Route({ path: '/', component: MainMenu_1.MainMenu, name: 'Main' }),
+            new router_1.Route({ path: '/main', component: MainMenu_1.MainMenu, name: 'Main' }),
+            new router_1.Route({ path: '/login', component: LoginComponent_1.LoginComponent, name: 'Login' }),
+            new router_1.Route({ path: '/employees', component: EmployeesComponent_1.EmployeesComponent, name: 'Employees' })
         ]), 
-        __metadata('design:paramtypes', [router_1.Router])
+        __metadata('design:paramtypes', [router_1.Router, SharedMemory_1.SharedMemory])
     ], App);
     return App;
 })();
 exports.App = App;
-angular2_1.bootstrap(App, [angular2_1.bind(router_1.APP_BASE_HREF).toValue('/'), RestApi_1.RestApi, http_1.HTTP_PROVIDERS, router_1.ROUTER_DIRECTIVES, router_1.ROUTER_PROVIDERS]);
+angular2_1.bootstrap(App, [angular2_1.provide(router_1.LocationStrategy, { useClass: router_1.HashLocationStrategy }),
+    angular2_1.provide(router_1.ROUTER_PRIMARY_COMPONENT, { useValue: App }),
+    angular2_1.provide(router_1.APP_BASE_HREF, { useValue: '/#/' }),
+    RestApi_1.RestApi, http_1.HTTP_PROVIDERS, router_1.ROUTER_DIRECTIVES, router_1.ROUTER_PROVIDERS, SharedMemory_1.SharedMemory]);
 //# sourceMappingURL=app.js.map

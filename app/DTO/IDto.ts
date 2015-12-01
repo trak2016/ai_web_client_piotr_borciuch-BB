@@ -1,5 +1,4 @@
 
-import {Array} from "../../../../../../Program Files (x86)/JetBrains/WebStorm 11.0/plugins/JavaScriptLanguage/typescriptCompiler/external/lib";
 export interface IDto {
     toJson(): string;
 }
@@ -31,6 +30,10 @@ export class AuthDTO implements IDto {
         this.password = password;
     }
 
+    getLogin(): string{
+        return this.login;
+    }
+
 
     toJson():string {
         return JSON.stringify(this);
@@ -38,30 +41,35 @@ export class AuthDTO implements IDto {
 }
 
 export class EmployeeDTO implements  IDto{
-    public id: number;
-    public login: string;
+    public id: number = 0;
+    private authenticationData: AuthDTO;
     private roles: Array<RoleDTO>;
-    public name: string;
-    public surname: string;
+    public name: string = "";
+    public surname: string = "";
     public position: PositionDTO;
-    public status: string;
+    public status: string = "";
 
 
     constructor(json: Object){
         if(json != null){
-            this.login = json['authenticationData']['login'];
-            this.createRoles(json["roles"]);
+            this.id = json["id"];
+            this.authenticationData = new AuthDTO(json['authenticationData']['login'],"");
+            this.createRoles(json['roles']);
             this.name = json['name'];
             this.surname = json['surname'];
             this. position = new PositionDTO(json['position']);
+            this.status = json["status"];
+        }else{
+            this.roles = [];
+            this.position = new PositionDTO(null);
         }
 
     }
 
-    createRoles(rolesJson: Object){
+    createRoles(rolesJson: Array<string>){
         this.roles = new Array();
-        for(let role in rolesJson){
-            this.roles.push(new RoleDTO(role));
+        for(let  i = 0; i < rolesJson.length; i++){
+            this.roles.push(new RoleDTO(rolesJson[i]));
         }
     }
 
@@ -69,12 +77,28 @@ export class EmployeeDTO implements  IDto{
         return this.position.name;
     }
 
+    getLogin():string {
+        return this.authenticationData.getLogin();
+    }
+
+    setAuthenticationData(login: string, password: string){
+        this.authenticationData = new AuthDTO(login, password);
+    }
     getPrivileges(): string[]{
         let privileges: string[] = new Array(this.roles.length);
-        for(let role: RoleDTO in this.roles){
-            privileges.push(role.name);
+        for(let i = 0; i < this.roles.length; i++){
+            privileges.push(this.roles[i].name);
         }
         return privileges;
+    }
+
+    createRoleFromPrivileges(privileges){
+        this.roles = new Array();
+        for(let i = 0; i < privileges.length; i++){
+            let role: RoleDTO = new RoleDTO(null);
+            role.name = privileges[i];
+            this.roles.push(role);
+        }
     }
 
     toJson():string {
@@ -87,8 +111,8 @@ export class EmployeeDTO implements  IDto{
 
 export class PositionDTO implements IDto{
 
-    private id: number;
-    public name: string;
+    private id: number = 0;
+    public name: string = "";
 
     constructor(json: Object){
         if(json != null){
@@ -109,10 +133,13 @@ class RoleDTO implements IDto{
     private employeeId: number;
 
     constructor(json:Object){
-        this.name = json["name"];
-        this.id = json["id"];
-        this.employeeId = json["employeeId"];
+        if(json != null){
+            this.name = json["name"];
+            this.id = json["id"];
+            this.employeeId = json["employeeId"];
+        }
     }
+
 
     toJson():string {
         return JSON.stringify(this);

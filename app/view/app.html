@@ -1,6 +1,19 @@
+<div>
+
+
 <h2>restaurator</h2>
-<h3>{{Salutation}}</h3>
+    <div *ng-if="sharedMemory.userLogin != null">
+        <h3 >Witaj {{sharedMemory.userLogin}}</h3>
+        <button (click)="logout()">Wyloguj</button>
+    </div>
+
+    <div class="error">
+        <ul>
+            <li *ng-for="#item of sharedMemory.appErrors">{{item.message}}</li>
+        </ul>
+    </div>
 <auth-routing>
 
 </auth-routing>
 <button [hidden]="salutation" (click)="back()">Powrót</button>
+</div>
