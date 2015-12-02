@@ -32,12 +32,12 @@ export class EmployeeService extends Service{
     handle(response:Response) {
         if(response.status == 200){
             if(response.json() != null){
-                return this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
+                this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }else{
-                this.getAllEmployees();
+                this.voidHandler.handle();
             }
         }else if(response.status == 201){
-            this.getAllEmployees();
+            this.voidHandler.handle();
         }else{
             this.errorHandler.handle(this.mapError(JSON.parse(response.text())));
         }

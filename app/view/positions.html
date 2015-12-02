@@ -1,0 +1,21 @@
+<div>
+    <h3>Lista stanowisk</h3>
+    <sortingtable [rows]="rows" [columns]="columns" (select)="onSelectedPosition($event)"></sortingtable>
+    <div>
+        <form (ng-submit)="onSavePosition()" #hf="form">
+            <div class="form_group">
+                <label>Id</label> {{selectedPosition.id}}
+            </div>
+            <div class="form_group">
+                <label>Nazwa: </label>
+                <input type="text" class="form_style" required
+                       [(ng-model)]="selectedPosition.name" placeholder="Nazwa" #name="form">
+            </div>
+
+    <button class="form_button"
+            (click)="onNewPosition()">Nowe stanowisko</button>
+    <button  class="form_button">Zapisz</button>
+    </form>
+    </div>
+</div>
+<employees [positions]="positions" [employees]="selectedPosition.employees" (changed)="onEmployeeChange($event)"

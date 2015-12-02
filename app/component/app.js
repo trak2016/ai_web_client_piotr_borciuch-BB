@@ -41,10 +41,10 @@ var App = (function () {
             directives: [router_1.ROUTER_DIRECTIVES, angular2_1.CORE_DIRECTIVES, MainMenu_1.MainMenu, AuthRouting_1.AuthRouting],
         }),
         router_1.RouteConfig([
-            new router_1.Route({ path: '/', component: MainMenu_1.MainMenu, name: 'Main' }),
-            new router_1.Route({ path: '/main', component: MainMenu_1.MainMenu, name: 'Main' }),
-            new router_1.Route({ path: '/login', component: LoginComponent_1.LoginComponent, name: 'Login' }),
-            new router_1.Route({ path: '/employees', component: EmployeesComponent_1.EmployeesComponent, name: 'Employees' })
+            new router_1.Route({ path: '/', component: MainMenu_1.MainMenu, as: 'Main' }),
+            new router_1.Route({ path: '/main', component: MainMenu_1.MainMenu, as: 'Main' }),
+            new router_1.Route({ path: '/login', component: LoginComponent_1.LoginComponent, as: 'Login' }),
+            new router_1.Route({ path: '/employees', component: EmployeesComponent_1.EmployeesComponent, as: 'Employees' })
         ]), 
         __metadata('design:paramtypes', [router_1.Router, SharedMemory_1.SharedMemory])
     ], App);

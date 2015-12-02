@@ -111,13 +111,21 @@ export class EmployeeDTO implements  IDto{
 
 export class PositionDTO implements IDto{
 
-    private id: number = 0;
+    public id: number = 0;
     public name: string = "";
+    public employees: Array<EmployeeDTO> = new Array();
 
     constructor(json: Object){
         if(json != null){
             this.id = json["id"];
             this.name = json["name"];
+
+        }
+    }
+
+    private prepareEmployees(json: Array<any>){
+        for(let i = 0; i < json.length; i++){
+            this.employees.push(new EmployeeDTO(json[i]))
         }
     }
 
@@ -140,6 +148,27 @@ class RoleDTO implements IDto{
         }
     }
 
+
+    toJson():string {
+        return JSON.stringify(this);
+    }
+}
+
+export class RestaurantTable implements IDto{
+
+    public id: number = 0;
+    public tableNumber: number = 0;
+    public seatsNumber: number = 0;
+    public status: string = "UNOCCUPIED";
+
+    constructor(json: Object){
+        if(json != null){
+            this.id = json["id"];
+            this.tableNumber = json["tableNumber"];
+            this.seatsNumber = json["seatsNumber"];
+            this.status = json["status"];
+        }
+    }
 
     toJson():string {
         return JSON.stringify(this);

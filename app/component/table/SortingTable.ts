@@ -1,14 +1,13 @@
 /**
  * Created by test on 2015-11-24.
  */
-import {Component, View, NgFor, EventEmitter} from 'angular2/angular2';
+import {Component, View, NgFor, EventEmitter, Input} from 'angular2/angular2';
 import {Column} from './column';
 import {Sorter} from './sorter';
 import {SelectionListener} from "./SelectionListener";
 import {Row} from "./Row";
 @Component({
     selector: 'sortingtable',
-    inputs: ['rows: rows','columns: columns'],
     events: ['select']
 })
 
@@ -18,9 +17,9 @@ import {Row} from "./Row";
 })
 
 export class SortingTable{
-    private select: EventEmitter<Row>;
-    private columns: Array<Column>;
-    private rows: Array<Row>;
+    private select: EventEmitter;
+    @Input private columns: Array<Column>;
+    @Input private rows: Array<Row>;
     private selectionListener: SelectionListener;
     private sorter: Sorter = new Sorter();
 

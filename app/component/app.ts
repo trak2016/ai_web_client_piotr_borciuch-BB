@@ -24,10 +24,10 @@ import {SharedMemory} from "../shared/SharedMemory"
 
 @RouteConfig(
     [
-        new Route({path: '/', component: MainMenu, name: 'Main'}),
-        new Route({path: '/main', component: MainMenu, name: 'Main'}),
-        new Route({path: '/login', component: LoginComponent, name: 'Login'}),
-        new Route({path: '/employees', component: EmployeesComponent, name: 'Employees'})
+        new Route({path: '/', component: MainMenu, as: 'Main'}),
+        new Route({path: '/main', component: MainMenu, as: 'Main'}),
+        new Route({path: '/login', component: LoginComponent, as: 'Login'}),
+        new Route({path: '/employees', component: EmployeesComponent, as: 'Employees'})
 
     ]
 )

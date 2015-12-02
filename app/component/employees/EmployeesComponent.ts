@@ -1,4 +1,5 @@
-import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject, EventEmitter} from 'angular2/angular2';
+import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, OnChanges, SimpleChange,
+    bootstrap, Inject, EventEmitter, Input} from 'angular2/angular2';
 import {SortingTable} from "../table/SortingTable";
 import {EmployeeService} from "../../service/employees/EmployeeService";
 import {PositionService} from "../../service/positions/PositionService";
@@ -8,26 +9,35 @@ import {Error} from "../../DTO/IDto";
 import {Column} from "../table/Column";
 import {Row} from "../table/Row";
 import {SelectionListener} from "../table/SelectionListener";
+import {VoidHandler} from "../../handler/Handler";
+import {SharedMemory} from "../../shared/SharedMemory";
+import {SharedMemory} from "../../shared/SharedMemory";
+import {EvalError} from "../../../../../../../Program Files (x86)/JetBrains/WebStorm 11.0/plugins/JavaScriptLanguage/typescriptCompiler/external/lib";
 
 @Component({
     selector: 'employees',
-    providers: [EmployeeService, PositionService]
+    providers: [EmployeeService, PositionService],
+    events: ['changed']
 })
 @View({
     templateUrl: './app/view/employees.html',
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable]
 })
-export class EmployeesComponent implements SelectionListener{
+export class EmployeesComponent implements OnChanges{
 
     private employeeService: EmployeeService;
     private positionService: PositionService;
+    private sharedMemory: SharedMemory;
+    private onEmployeeChanged: EventEmitter;
+
     private selectedEmployee: EmployeeDTO;
-    private employees: Array<EmployeeDTO>;
+    @Input private employees: Array<EmployeeDTO>;
+    @Input private positions: Array<PositionDTO>;
     private columns: Array<Column>;
     private errors: Array<Error>;
     private rows: Array<Row>;
     private statusButtonDescription: string;
-    private positions: Array<PositionDTO>;
+
 
     //Varaibles below are used to manage view
 
@@ -43,15 +53,18 @@ export class EmployeesComponent implements SelectionListener{
     private manager:boolean = false;
     private owner:boolean = false;
 
-    //new employee's ogin and passwords
+    //new employee's login and passwords
     private login:string;
     private password: string;
     private confirm: string;
     private passwordMismatch = false;
 
     constructor(employeeService: EmployeeService,
-                positionService: PositionService){
+                positionService: PositionService,
+                sharedMemory: SharedMemory){
 
+        this.sharedMemory = sharedMemory;
+        this.onEmployeeChanged = new EventEmitter();
         this.employees = [];
         this.rows = [];
         this.positions =[];
@@ -90,21 +103,7 @@ export class EmployeesComponent implements SelectionListener{
     }
 
     private handleError(errors:Array<Error>) {
-        this.errors = errors;
-    }
-
-
-    private handleEmployeesArray(dtos:Array<EmployeeDTO>) {
-        this.employees = dtos;
-        console.log(this.employees);
-        this.mapToRows();
-        this.refreshSelected();
-        console.log(this.rows);
-    }
-
-    private handlePositionsArray(positions: Array<PositionDTO>){
-        console.log(positions);
-        this.positions = positions;
+        this.sharedMemory.appErrors = errors;
     }
 
     onSaveEmployee(){
@@ -137,7 +136,6 @@ export class EmployeesComponent implements SelectionListener{
 
     onSelected(event: Row) {
         this.setSelectedEmployeeById(event.getElementId());
-        console.log(this.selectedEmployee);
         this.isNew = false;
         //sets checkboxs with employee's roles
         this.employed = this.selectedEmployee.status;
@@ -176,7 +174,13 @@ export class EmployeesComponent implements SelectionListener{
 
     }
 
+    private handleOnSaveEmployee(){
+        this.onEmployeeChanged.next(null);
+
+    }
+
     private setSelectedEmployeeById(id: number){
+        this.selectedEmployee = new EmployeeDTO(null);
         for(let i = 0; i < this.employees.length; i++){
             if(this.employees[i].id == id){
                 this.selectedEmployee = this.employees[i];
@@ -196,18 +200,37 @@ export class EmployeesComponent implements SelectionListener{
         let errorsHandler: ErrorsHandler =  {
             handle: (errors: Array<Error>) => this.handleError(errors)
         }
-        let employeeHandler: ArrayHandler =  {
-            handle: (employees: Array<EmployeeDTO>) => this.handleEmployeesArray(employees)
-        }
-        let positionsHandler: ArrayHandler =  {
-            handle: (positions: Array<PositionDTO>) => this.handlePositionsArray(positions)
+        let voidHandler: VoidHandler =  {
+            handle: () => this.handleOnSaveEmployee()
         }
 
-        this.employeeService.registerArrayHandler(employeeHandler);
         this.employeeService.registerErrorsHandler(errorsHandler);
+        this.employeeService.registerVoidHandler(voidHandler);
         this.positionService.registerErrorsHandler(errorsHandler);
-        this.positionService.registerArrayHandler(positionsHandler);
     }
 
 
+    onChanges(changes:{[propName: string]: SimpleChange}):any {
+        this.chooseEmployeeToShow();
+    }
+
+    private chooseEmployeeToShow(){
+        let id: number = this.selectedEmployee.id;
+        if(id != 0){
+            this.setSelectedEmployeeById(id);
+            if(this.selectedEmployee.id == 0 && this.employees.length > 0){
+                this.selectedEmployee = this.employees.pop();
+            }
+        }else{
+            this.setNewestEmployee();
+        }
+    }
+    private setNewestEmployee(){
+        this.employees.sort((first: EmployeeDTO, second: EmployeeDTO) => {
+            if(first.id > second.id) return 1;
+            else if(first.id < second.id) return -1;
+            else return 0;
+        });
+        this.selectedEmployee = this.employees.pop();
+    }
 }

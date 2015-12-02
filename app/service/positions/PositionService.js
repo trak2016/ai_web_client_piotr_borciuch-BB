@@ -41,14 +41,14 @@ var PositionService = (function (_super) {
     };
     PositionService.prototype.handle = function (response) {
         if (response.status == 201) {
-            this.getAllPositions();
+            this.voidHandler.handle();
         }
         else if (response.status == 200) {
             if (response.json() != null) {
                 this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }
             else {
-                this.getAllPositions();
+                this.voidHandler.handle();
             }
         }
         else {

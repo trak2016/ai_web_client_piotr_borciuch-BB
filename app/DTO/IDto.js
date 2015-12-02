@@ -84,11 +84,17 @@ var PositionDTO = (function () {
     function PositionDTO(json) {
         this.id = 0;
         this.name = "";
+        this.employees = new Array();
         if (json != null) {
             this.id = json["id"];
             this.name = json["name"];
         }
     }
+    PositionDTO.prototype.prepareEmployees = function (json) {
+        for (var i = 0; i < json.length; i++) {
+            this.employees.push(new EmployeeDTO(json[i]));
+        }
+    };
     PositionDTO.prototype.toJson = function () {
         return JSON.stringify(this);
     };
@@ -108,4 +114,23 @@ var RoleDTO = (function () {
     };
     return RoleDTO;
 })();
+var RestaurantTable = (function () {
+    function RestaurantTable(json) {
+        this.id = 0;
+        this.tableNumber = 0;
+        this.seatsNumber = 0;
+        this.status = "UNOCCUPIED";
+        if (json != null) {
+            this.id = json["id"];
+            this.tableNumber = json["tableNumber"];
+            this.seatsNumber = json["seatsNumber"];
+            this.status = json["status"];
+        }
+    }
+    RestaurantTable.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return RestaurantTable;
+})();
+exports.RestaurantTable = RestaurantTable;
 //# sourceMappingURL=IDto.js.map

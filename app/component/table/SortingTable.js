@@ -26,10 +26,17 @@ var SortingTable = (function () {
     SortingTable.prototype.onSelectedRow = function (selectedRow) {
         this.select.next(selectedRow);
     };
+    __decorate([
+        angular2_1.Input, 
+        __metadata('design:type', Array)
+    ], SortingTable.prototype, "columns");
+    __decorate([
+        angular2_1.Input, 
+        __metadata('design:type', Array)
+    ], SortingTable.prototype, "rows");
     SortingTable = __decorate([
         angular2_1.Component({
             selector: 'sortingtable',
-            inputs: ['rows: rows', 'columns: columns'],
             events: ['select']
         }),
         angular2_1.View({

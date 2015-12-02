@@ -16,8 +16,9 @@ var PositionService_1 = require("../../service/positions/PositionService");
 var IDto_1 = require("../../DTO/IDto");
 var Column_1 = require("../table/Column");
 var Row_1 = require("../table/Row");
+var SharedMemory_1 = require("../../shared/SharedMemory");
 var EmployeesComponent = (function () {
-    function EmployeesComponent(employeeService, positionService) {
+    function EmployeesComponent(employeeService, positionService, sharedMemory) {
         //Varaibles below are used to manage view
         //if true, then new employee is created, status button is blocked
         this.isNew = true;
@@ -29,6 +30,8 @@ var EmployeesComponent = (function () {
         this.manager = false;
         this.owner = false;
         this.passwordMismatch = false;
+        this.sharedMemory = sharedMemory;
+        this.onEmployeeChanged = new angular2_1.EventEmitter();
         this.employees = [];
         this.rows = [];
         this.positions = [];
@@ -63,18 +66,7 @@ var EmployeesComponent = (function () {
         }
     };
     EmployeesComponent.prototype.handleError = function (errors) {
-        this.errors = errors;
-    };
-    EmployeesComponent.prototype.handleEmployeesArray = function (dtos) {
-        this.employees = dtos;
-        console.log(this.employees);
-        this.mapToRows();
-        this.refreshSelected();
-        console.log(this.rows);
-    };
-    EmployeesComponent.prototype.handlePositionsArray = function (positions) {
-        console.log(positions);
-        this.positions = positions;
+        this.sharedMemory.appErrors = errors;
     };
     EmployeesComponent.prototype.onSaveEmployee = function () {
         this.passwordMismatch = false;
@@ -104,7 +96,6 @@ var EmployeesComponent = (function () {
     };
     EmployeesComponent.prototype.onSelected = function (event) {
         this.setSelectedEmployeeById(event.getElementId());
-        console.log(this.selectedEmployee);
         this.isNew = false;
         //sets checkboxs with employee's roles
         this.employed = this.selectedEmployee.status;
@@ -141,7 +132,11 @@ var EmployeesComponent = (function () {
             privileges.push("OWNER");
         this.selectedEmployee.createRoleFromPrivileges(privileges);
     };
+    EmployeesComponent.prototype.handleOnSaveEmployee = function () {
+        this.onEmployeeChanged.next(null);
+    };
     EmployeesComponent.prototype.setSelectedEmployeeById = function (id) {
+        this.selectedEmployee = new IDto_1.EmployeeDTO(null);
         for (var i = 0; i < this.employees.length; i++) {
             if (this.employees[i].id == id) {
                 this.selectedEmployee = this.employees[i];
@@ -160,27 +155,58 @@ var EmployeesComponent = (function () {
         var errorsHandler = {
             handle: function (errors) { return _this.handleError(errors); }
         };
-        var employeeHandler = {
-            handle: function (employees) { return _this.handleEmployeesArray(employees); }
+        var voidHandler = {
+            handle: function () { return _this.handleOnSaveEmployee(); }
         };
-        var positionsHandler = {
-            handle: function (positions) { return _this.handlePositionsArray(positions); }
-        };
-        this.employeeService.registerArrayHandler(employeeHandler);
         this.employeeService.registerErrorsHandler(errorsHandler);
+        this.employeeService.registerVoidHandler(voidHandler);
         this.positionService.registerErrorsHandler(errorsHandler);
-        this.positionService.registerArrayHandler(positionsHandler);
     };
+    EmployeesComponent.prototype.onChanges = function (changes) {
+        this.chooseEmployeeToShow();
+    };
+    EmployeesComponent.prototype.chooseEmployeeToShow = function () {
+        var id = this.selectedEmployee.id;
+        if (id != 0) {
+            this.setSelectedEmployeeById(id);
+            if (this.selectedEmployee.id == 0 && this.employees.length > 0) {
+                this.selectedEmployee = this.employees.pop();
+            }
+        }
+        else {
+            this.setNewestEmployee();
+        }
+    };
+    EmployeesComponent.prototype.setNewestEmployee = function () {
+        this.employees.sort(function (first, second) {
+            if (first.id > second.id)
+                return 1;
+            else if (first.id < second.id)
+                return -1;
+            else
+                return 0;
+        });
+        this.selectedEmployee = this.employees.pop();
+    };
+    __decorate([
+        angular2_1.Input, 
+        __metadata('design:type', Array)
+    ], EmployeesComponent.prototype, "employees");
+    __decorate([
+        angular2_1.Input, 
+        __metadata('design:type', Array)
+    ], EmployeesComponent.prototype, "positions");
     EmployeesComponent = __decorate([
         angular2_1.Component({
             selector: 'employees',
-            providers: [EmployeeService_1.EmployeeService, PositionService_1.PositionService]
+            providers: [EmployeeService_1.EmployeeService, PositionService_1.PositionService],
+            events: ['changed']
         }),
         angular2_1.View({
             templateUrl: './app/view/employees.html',
             directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, SortingTable_1.SortingTable]
         }), 
-        __metadata('design:paramtypes', [EmployeeService_1.EmployeeService, PositionService_1.PositionService])
+        __metadata('design:paramtypes', [EmployeeService_1.EmployeeService, PositionService_1.PositionService, SharedMemory_1.SharedMemory])
     ], EmployeesComponent);
     return EmployeesComponent;
 })();
