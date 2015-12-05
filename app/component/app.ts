@@ -8,9 +8,10 @@ import {LoginService} from "../service/login/LoginService";
 import {RestApi} from "../api/RestApi";
 import {LoginComponent} from "./login/LoginComponent";
 import {AuthRouting} from './routing/AuthRouting'
-import {EmployeesComponent} from "./employees/EmployeesComponent";
+import {PositionComponent} from "./position/PositionComponent";
 import {Error} from "../DTO/IDto";
 import {SharedMemory} from "../shared/SharedMemory"
+import {RestaurantTableComponent} from "./restaurantTable/RestaurantTableComponent";
 
 @Component({
     selector: 'app'
@@ -26,8 +27,8 @@ import {SharedMemory} from "../shared/SharedMemory"
     [
         new Route({path: '/', component: MainMenu, as: 'Main'}),
         new Route({path: '/main', component: MainMenu, as: 'Main'}),
-        new Route({path: '/login', component: LoginComponent, as: 'Login'}),
-        new Route({path: '/employees', component: EmployeesComponent, as: 'Employees'})
+        new Route({path: '/room', component: RestaurantTableComponent, as: 'Room'}),
+        new Route({path: '/employees', component: PositionComponent, as: 'Employees'})
 
     ]
 )
@@ -48,7 +49,7 @@ export class App {
     public logout(){
         sessionStorage.clear();
         this.sharedMemory.clear();
-        this.router.navigate(['/Login']);
+        this.router.navigate(['/Main']);
     }
 
 }

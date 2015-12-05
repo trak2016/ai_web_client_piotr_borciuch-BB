@@ -26,12 +26,12 @@ export class EmployeeService extends Service{
     }
 
     public changeEmployeeStatus(employee: EmployeeDTO){
-        this.restApi.putRequest("employees/employee" + employee.getLogin(), null, this);
+        this.restApi.putRequest("employees/employee/" + employee.id, employee, this);
     }
 
     handle(response:Response) {
         if(response.status == 200){
-            if(response.json() != null){
+            if(response.text() != ""){
                 this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }else{
                 this.voidHandler.handle();

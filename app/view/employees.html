@@ -4,7 +4,7 @@
 </div>
 <div>
     <h4>Zarządzaj pracownikiem</h4>
-    <form (ng-submit)="onSaveEmployee()" #hf="form">
+    <form (ng-submit)="onSaveEmployee()" #hf="form" >
         <div class="form_group">
             <label>Id</label> {{selectedEmployee.id}}
         </div>
@@ -20,40 +20,44 @@
         </div>
         <div class="form_group">
             <label>Stanowisko: </label>
-            <select [(ng-model)]="selectedEmployee.position.name">
-                <option *ng-for="#position of positions" [value]="position.name">{{position.name}}</option>
+            <select #select (change)="changeEmployeePosition(select.value)">
+                <option *ng-for="#position of positions" [selected]="position.name == selectedEmployee.position.name"
+                 [value]="position.name">{{position.name}}</option>
             </select>
         </div>
 
         <div class="form_group">
             <p>Status: </p>
-            <select [(ng-model)]="selectedEmployee.status">
-                <option [value]="EMPLOYEED">Zatrudniony</option>
-                <option [value]="FIRED">Zwolniony</option>
-            </select>
+            <label>
+                <input #employedck name="status" type="radio" (change)="changeEmployeeStatus($event)" [checked]="isEmployed"> </option>
+                Zatrudniony
+            </label>
+            <label >
+                <input #firedck name="status" type="radio" (change)="changeEmployeeStatus($event)" [checked]="!isEmployed"></option>
+                Zwolniony
+            </label>
         </div>
 
         <div class="form_group">
             <p>Role: </p>
             <label>
-                <input name="roles" type="checkbox" value="WAITER" [(ng-model)]="waiter"> </option>
+                <input #waiterck name="roles" type="checkbox" value="WAITER" [(ng-model)]="waiter" (change)="waiter = waiterck.checked"> </option>
                 Kelner
             </label>
             <label >
-                <input name="roles" type="checkbox" value="COOK" [(ng-model)]="cook"></option>
+                <input #cookck name="roles" type="checkbox" value="COOK" [(ng-model)]="cook"  (change)="cook = cookck.checked"></option>
                 Kucharz
             </label>
 
                 <label>
-                    <input name="roles" type="checkbox" value="MANAGER" [(ng-model)]="manager"></option>
+                    <input #managerck name="roles" type="checkbox" value="MANAGER" [(ng-model)]="manager"  (change)="manager = managerck.checked"></option>
                     Menedżer
                 </label>
                 <label>
-                    <input name="roles" type="checkbox" value="OWNER" [(ng-model)]="owner"></option>
+                    <input #ownerck name="roles" type="checkbox" value="OWNER" [(ng-model)]="owner"  (change)="owner = ownerck.checked"></option>
                     Właściciel
                 </label>
             </div>
-        </div>
         <div *ng-if="isNew" class="form_group">
             <div>
                 <label>Login: </label>
@@ -67,17 +71,19 @@
             </div>
             <div>
                 <label>Potwierdź hasło: </label>
-                <input type="text" class="form_style" required
+                <input type="password" class="form_style" required
                        [(ng-model)]="confirm" placeholder="Potwierdź hasło" #name="form">
                 <div *ng-if="passwordMismatch">Hasła są różne!</div>
             </div>
         </div>
 
-        <button class="form_button"
-                (click)="onNewEmployee()">Nowy pracownik</button>
         <button  class="form_button">Zapisz</button>
-        <button *ng-if="!isNew" class="form_button"
-                (click)="changeEmployeeStatus()">{{statusButtonDescription}}
-        </button>
+
     </form>
+
+<button class="form_button"
+        (click)="onNewEmployee()">Nowy pracownik</button>
+<button *ng-if="!isNew" class="form_button"
+        (click)="onChangeStatus()">{{statusButtonDescription}}
+</button>
 </div>

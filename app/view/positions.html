@@ -12,10 +12,14 @@
                        [(ng-model)]="selectedPosition.name" placeholder="Nazwa" #name="form">
             </div>
 
-    <button class="form_button"
-            (click)="onNewPosition()">Nowe stanowisko</button>
+
     <button  class="form_button">Zapisz</button>
     </form>
     </div>
 </div>
-<employees [positions]="positions" [employees]="selectedPosition.employees" (changed)="onEmployeeChange($event)"
+<button class="form_button"
+        (click)="onNewPosition()">Nowe stanowisko</button>
+<div *ng-if="isDisables">
+    <p>Aby zarządzać pracownikami wybierz jedno z dostępnych stanowisk lub zakończ tworzenie nowego</p>
+</div>
+<employees  *ng-if="!isDisabled" [position]="selectedPosition.name" [positions]="positions" [employees]="selectedPosition.employees" (changed)="onEmployeeChange($event)"></employees>

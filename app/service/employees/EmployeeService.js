@@ -37,11 +37,11 @@ var EmployeeService = (function (_super) {
         this.restApi.putRequest("employees/employee", employee, this);
     };
     EmployeeService.prototype.changeEmployeeStatus = function (employee) {
-        this.restApi.putRequest("employees/employee" + employee.getLogin(), null, this);
+        this.restApi.putRequest("employees/employee/" + employee.id, employee, this);
     };
     EmployeeService.prototype.handle = function (response) {
         if (response.status == 200) {
-            if (response.json() != null) {
+            if (response.text() != "") {
                 this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }
             else {

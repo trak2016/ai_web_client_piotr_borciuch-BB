@@ -1,6 +1,8 @@
 <div *ng-if="hasAdminRole">
-    <button [router-link]="['/Employees']">Zarządzaj pracownikami</button>
-    <button >Zarządzaj menu restauracji</button>
-    <button >Zarządzaj salą</button>
+    <button [router-link]="['/Employees']">Zarządzaj stanowiskami i pracownikami</button>
+    <button [router-link]="['/Room']">Zarządzaj salą</button>
     <button >Zarządzaj restauracją</button>
+</div>
+<div *ng-if="!isLogged">
+    <login (afterlogin)="onLogin($event)"></login>
 </div>

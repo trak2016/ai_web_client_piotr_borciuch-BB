@@ -1,0 +1,25 @@
+<div>
+    <h3>Lista stolików</h3>
+    <sortingtable [rows]="rows" [columns]="columns" (select)="onSelected($event)"></sortingtable>
+</div>
+<div>
+    <form (ng-submit)="onSaveTable()" #hf="form">
+        <div class="form_group">
+            <label>Id</label> {{selectedTable.id}}
+        </div>
+        <div class="form_group">
+            <label>Numer: </label>
+            <input type="text" class="form_style" required
+                   [(ng-model)]="selectedTable.tableNumber" placeholder="Numer" #name="form">
+        </div>
+        <div class="form_group">
+            <label>Ilość miejsc: </label>
+            <input type="text" class="form_style" required
+                   [(ng-model)]="selectedTable.seatsNumber" placeholder="Numer" #name="form">
+        </div>
+
+        <button  class="form_button">Zapisz</button>
+    </form>
+    <button class="form_button"
+            (click)="onNewTable()">Nowy stolik</button>
+</div>

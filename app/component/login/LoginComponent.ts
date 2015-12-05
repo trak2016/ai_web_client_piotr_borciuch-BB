@@ -1,4 +1,4 @@
-import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject, Host} from 'angular2/angular2';
+import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, bootstrap, Inject, Host, EventEmitter} from 'angular2/angular2';
 import {Router, Route, RouteConfig} from 'angular2/router';
 import {LoginService} from '../../service/login/LoginService';
 import {MainMenu} from "../main/MainMenu";
@@ -14,7 +14,7 @@ import {SharedMemory} from "../../shared/SharedMemory"
 @Component({
     selector: 'login',
     providers: [LoginService],
-
+    events: ['afterlogin']
 })
 @View(
     {
@@ -26,6 +26,7 @@ import {SharedMemory} from "../../shared/SharedMemory"
 export class LoginComponent{
 
     private sharedMemory: SharedMemory;
+    private afterlogin: EventEmitter;
     private router: Router;
     private loginService: LoginService;
     public login: string;
@@ -34,6 +35,7 @@ export class LoginComponent{
     constructor(loginService: LoginService, router: Router, sharedMemory: SharedMemory){
         this.sharedMemory = sharedMemory;
         this.loginService = loginService;
+        this.afterlogin = new EventEmitter();
         this.login = "";
         this.password = "";
         this.registerHandlers();
@@ -49,14 +51,13 @@ export class LoginComponent{
     handleError(errors:Array<Error>) {
 
         for(let item in errors)
-            console.log(item.message);
         this.sharedMemory.appErrors = errors;
     }
 
     handleObject(dto:EmployeeDTO) {
         this.sharedMemory.userLogin = sessionStorage.getItem("userLogin");
         this.sharedMemory.userPrivileges = sessionStorage.getItem("userPrivileges");
-        this.router.parent.navigateByUrl('/main');
+        this.afterlogin.next(dto);
     }
 
 

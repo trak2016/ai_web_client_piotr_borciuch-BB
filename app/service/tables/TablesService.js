@@ -17,56 +17,53 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var angular2_1 = require("angular2/angular2");
 var Service_1 = require("../Service");
+var angular2_1 = require("angular2/angular2");
 var RestApi_1 = require("../../api/RestApi");
 var IDto_1 = require("../../DTO/IDto");
-/**
- * Created by test on 2015-11-28.
- */
-var PositionService = (function (_super) {
-    __extends(PositionService, _super);
-    function PositionService(restApi) {
+var TablesService = (function (_super) {
+    __extends(TablesService, _super);
+    function TablesService(restApi) {
         _super.call(this);
         this.restApi = restApi;
     }
-    PositionService.prototype.getAllPositions = function () {
-        this.restApi.getRequest("positions/", this);
+    TablesService.prototype.getAllTables = function () {
+        this.restApi.getRequest("tables", this);
     };
-    PositionService.prototype.savePosition = function (positionDTO) {
-        this.restApi.postRequest("positions/position/" + positionDTO.name, positionDTO, this);
+    TablesService.prototype.updateTable = function (table) {
+        this.restApi.putRequest("tables/table", table, this);
     };
-    PositionService.prototype.editPosition = function (positionDTO) {
-        this.restApi.putRequest("positions/position/", positionDTO, this);
+    TablesService.prototype.createNewTable = function (table) {
+        this.restApi.postRequest("tables/table", table, this);
     };
-    PositionService.prototype.handle = function (response) {
-        if (response.status == 201) {
-            this.voidHandler.handle();
-        }
-        else if (response.status == 200) {
+    TablesService.prototype.handle = function (response) {
+        if (response.status == 200) {
             if (response.text() != "") {
-                this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
+                this.arrayHandler.handle(this.mapObject(JSON.parse(response.text())));
             }
             else {
                 this.voidHandler.handle();
             }
         }
+        else if (response.status == 201) {
+            this.voidHandler.handle();
+        }
         else {
             this.errorHandler.handle(this.mapError(JSON.parse(response.text())));
         }
     };
-    PositionService.prototype.mapObjects = function (json) {
+    TablesService.prototype.mapObject = function (json) {
         var objects = new Array();
         for (var i = 0; i < json.length; i++) {
-            objects.push(new IDto_1.PositionDTO(json[i]));
+            objects.push(new IDto_1.RestaurantTable(json[i]));
         }
         return objects;
     };
-    PositionService = __decorate([
+    TablesService = __decorate([
         __param(0, angular2_1.Inject(RestApi_1.RestApi)), 
         __metadata('design:paramtypes', [RestApi_1.RestApi])
-    ], PositionService);
-    return PositionService;
+    ], TablesService);
+    return TablesService;
 })(Service_1.Service);
-exports.PositionService = PositionService;
-//# sourceMappingURL=PositionService.js.map
+exports.TablesService = TablesService;
+//# sourceMappingURL=TablesService.js.map

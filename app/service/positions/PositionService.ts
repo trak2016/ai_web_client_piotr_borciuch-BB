@@ -21,7 +21,7 @@ export class PositionService extends  Service{
     }
 
     savePosition(positionDTO: PositionDTO){
-        this.restApi.postRequest("positions/position/" + positionDTO.name, null, this);
+        this.restApi.postRequest("positions/position/" + positionDTO.name, positionDTO, this);
     }
 
     editPosition(positionDTO: PositionDTO){
@@ -33,7 +33,7 @@ export class PositionService extends  Service{
         if(response.status == 201){
             this.voidHandler.handle();
         }else if(response.status == 200){
-            if(response.json() != null){
+            if(response.text() != ""){
                 this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
             }else{
                 this.voidHandler.handle();

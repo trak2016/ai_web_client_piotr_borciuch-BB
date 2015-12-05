@@ -48,7 +48,8 @@ export class EmployeeDTO implements  IDto{
     public surname: string = "";
     public position: PositionDTO;
     public status: string = "";
-
+    public activeOrders: Array<any> = [];
+    public inactiveOrders: Array<any> = [];
 
     constructor(json: Object){
         if(json != null){
@@ -61,6 +62,7 @@ export class EmployeeDTO implements  IDto{
             this.status = json["status"];
         }else{
             this.roles = [];
+            this.status = "FIRED";
             this.position = new PositionDTO(null);
         }
 
@@ -94,6 +96,7 @@ export class EmployeeDTO implements  IDto{
 
     createRoleFromPrivileges(privileges){
         this.roles = new Array();
+        console.log(privileges);
         for(let i = 0; i < privileges.length; i++){
             let role: RoleDTO = new RoleDTO(null);
             role.name = privileges[i];
@@ -119,6 +122,7 @@ export class PositionDTO implements IDto{
         if(json != null){
             this.id = json["id"];
             this.name = json["name"];
+            this.prepareEmployees(json["employees"])
 
         }
     }

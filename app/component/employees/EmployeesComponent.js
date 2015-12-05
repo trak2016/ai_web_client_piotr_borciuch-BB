@@ -12,37 +12,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var angular2_1 = require('angular2/angular2');
 var SortingTable_1 = require("../table/SortingTable");
 var EmployeeService_1 = require("../../service/employees/EmployeeService");
-var PositionService_1 = require("../../service/positions/PositionService");
 var IDto_1 = require("../../DTO/IDto");
 var Column_1 = require("../table/Column");
 var Row_1 = require("../table/Row");
 var SharedMemory_1 = require("../../shared/SharedMemory");
 var EmployeesComponent = (function () {
-    function EmployeesComponent(employeeService, positionService, sharedMemory) {
+    function EmployeesComponent(employeeService, sharedMemory) {
+        this.position = "";
         //Varaibles below are used to manage view
         //if true, then new employee is created, status button is blocked
-        this.isNew = true;
-        //If true then employee is employeed, used in input tag with type: radio
-        this.employed = "EMPLOYEED";
+        this.isNew = false;
+        this.isEmployed = true;
+        this.isFired = false;
         //if true then employee has or will have role, used in inputs with type = "checkbox"
         this.waiter = false;
         this.cook = false;
         this.manager = false;
         this.owner = false;
         this.passwordMismatch = false;
+        this.selectedEmployee = new IDto_1.EmployeeDTO(null);
         this.sharedMemory = sharedMemory;
-        this.onEmployeeChanged = new angular2_1.EventEmitter();
+        this.changed = new angular2_1.EventEmitter();
         this.employees = [];
         this.rows = [];
         this.positions = [];
         this.columns = this.getColumns();
         this.employeeService = employeeService;
-        this.positionService = positionService;
-        this.selectedEmployee = new IDto_1.EmployeeDTO(null);
         this.registerHandlers();
         this.statusButtonDescription = "Zwolnij";
-        this.employeeService.getAllEmployees();
-        this.positionService.getAllPositions();
     }
     EmployeesComponent.prototype.getColumns = function () {
         return [
@@ -66,9 +63,13 @@ var EmployeesComponent = (function () {
         }
     };
     EmployeesComponent.prototype.handleError = function (errors) {
+        console.log(errors);
         this.sharedMemory.appErrors = errors;
     };
     EmployeesComponent.prototype.onSaveEmployee = function () {
+        this.sharedMemory.appErrors = [];
+        console.log(this.selectedEmployee.status);
+        this.prepareEmployeeToSave();
         this.passwordMismatch = false;
         if (this.selectedEmployee.id == 0) {
             if (this.password == this.confirm) {
@@ -83,27 +84,43 @@ var EmployeesComponent = (function () {
             this.employeeService.editEmployee(this.selectedEmployee);
         }
     };
+    EmployeesComponent.prototype.changeEmployeeStatus = function (event) {
+        if (this.selectedEmployee.status == "EMPLOYED") {
+            this.selectedEmployee.status = "FIRED";
+            this.isEmployed = false;
+            this.isFired = true;
+        }
+        else {
+            this.selectedEmployee.status = "EMPLOYED";
+            this.isEmployed = true;
+            this.isFired = false;
+        }
+    };
     EmployeesComponent.prototype.onChangeStatus = function () {
-        if (this.selectedEmployee.id != 0)
+        this.sharedMemory.appErrors = [];
+        if (this.selectedEmployee.id != 0) {
             this.employeeService.changeEmployeeStatus(this.selectedEmployee);
+        }
     };
     EmployeesComponent.prototype.onNewEmployee = function () {
         this.selectedEmployee = new IDto_1.EmployeeDTO(null);
+        this.selectedEmployee.position.name = this.position;
         this.isNew = true;
         this.login = "";
         this.password = "";
         this.confirm = "";
+        this.isEmployed = this.selectedEmployee.status == "EMPLOYED" ? true : false;
+        this.waiter = this.cook = this.manager = this.owner = false;
     };
     EmployeesComponent.prototype.onSelected = function (event) {
         this.setSelectedEmployeeById(event.getElementId());
         this.isNew = false;
         //sets checkboxs with employee's roles
-        this.employed = this.selectedEmployee.status;
+        this.isEmployed = this.selectedEmployee.status == "EMPLOYED" ? true : false;
         this.managePrivileges();
     };
     EmployeesComponent.prototype.managePrivileges = function () {
         var privileges = this.selectedEmployee.getPrivileges();
-        this.waiter = this.cook = this.manager = this.owner = false;
         for (var i = 0; i < privileges.length; i++) {
             if (privileges[i] == "WAITER") {
                 this.waiter = true;
@@ -120,7 +137,6 @@ var EmployeesComponent = (function () {
         }
     };
     EmployeesComponent.prototype.prepareEmployeeToSave = function () {
-        this.selectedEmployee.status = this.employed;
         var privileges = new Array();
         if (this.waiter)
             privileges.push("WAITER");
@@ -133,14 +149,12 @@ var EmployeesComponent = (function () {
         this.selectedEmployee.createRoleFromPrivileges(privileges);
     };
     EmployeesComponent.prototype.handleOnSaveEmployee = function () {
-        this.onEmployeeChanged.next(null);
+        this.changed.next(null);
     };
     EmployeesComponent.prototype.setSelectedEmployeeById = function (id) {
-        this.selectedEmployee = new IDto_1.EmployeeDTO(null);
         for (var i = 0; i < this.employees.length; i++) {
             if (this.employees[i].id == id) {
                 this.selectedEmployee = this.employees[i];
-                this.statusButtonDescription = this.selectedEmployee.status == "EMPLOYED" ? "Zwolnij" : "Przywróć";
                 break;
             }
         }
@@ -158,55 +172,67 @@ var EmployeesComponent = (function () {
         var voidHandler = {
             handle: function () { return _this.handleOnSaveEmployee(); }
         };
+        var savePositionHandler = {
+            handle: function () { return _this.onSaveEmployee(); }
+        };
         this.employeeService.registerErrorsHandler(errorsHandler);
         this.employeeService.registerVoidHandler(voidHandler);
-        this.positionService.registerErrorsHandler(errorsHandler);
     };
     EmployeesComponent.prototype.onChanges = function (changes) {
         this.chooseEmployeeToShow();
+        this.mapToRows();
+        this.managePrivileges();
+        this.isEmployed = this.selectedEmployee.status == "EMPLOYED" ? true : false;
     };
     EmployeesComponent.prototype.chooseEmployeeToShow = function () {
-        var id = this.selectedEmployee.id;
-        if (id != 0) {
-            this.setSelectedEmployeeById(id);
-            if (this.selectedEmployee.id == 0 && this.employees.length > 0) {
-                this.selectedEmployee = this.employees.pop();
-            }
+        if (this.employees.length == 0) {
+            this.onNewEmployee();
         }
         else {
             this.setNewestEmployee();
+            this.isNew = false;
         }
+        this.statusButtonDescription = this.selectedEmployee.status == "EMPLOYED" ? "Zwolnij" : "Przywróć";
     };
     EmployeesComponent.prototype.setNewestEmployee = function () {
-        this.employees.sort(function (first, second) {
-            if (first.id > second.id)
-                return 1;
-            else if (first.id < second.id)
-                return -1;
-            else
-                return 0;
-        });
-        this.selectedEmployee = this.employees.pop();
+        if (this.employees.length > 0) {
+            this.employees.sort(function (first, second) {
+                if (first.id > second.id)
+                    return 1;
+                else if (first.id < second.id)
+                    return -1;
+                else
+                    return 0;
+            });
+            this.selectedEmployee = this.employees[0];
+        }
+    };
+    EmployeesComponent.prototype.changeEmployeePosition = function (event) {
+        this.selectedEmployee.position.name = event;
     };
     __decorate([
-        angular2_1.Input, 
+        angular2_1.Input(), 
         __metadata('design:type', Array)
     ], EmployeesComponent.prototype, "employees");
     __decorate([
-        angular2_1.Input, 
+        angular2_1.Input(), 
         __metadata('design:type', Array)
     ], EmployeesComponent.prototype, "positions");
+    __decorate([
+        angular2_1.Input(), 
+        __metadata('design:type', String)
+    ], EmployeesComponent.prototype, "position");
     EmployeesComponent = __decorate([
         angular2_1.Component({
             selector: 'employees',
-            providers: [EmployeeService_1.EmployeeService, PositionService_1.PositionService],
+            providers: [EmployeeService_1.EmployeeService],
             events: ['changed']
         }),
         angular2_1.View({
             templateUrl: './app/view/employees.html',
             directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, SortingTable_1.SortingTable]
         }), 
-        __metadata('design:paramtypes', [EmployeeService_1.EmployeeService, PositionService_1.PositionService, SharedMemory_1.SharedMemory])
+        __metadata('design:paramtypes', [EmployeeService_1.EmployeeService, SharedMemory_1.SharedMemory])
     ], EmployeesComponent);
     return EmployeesComponent;
 })();

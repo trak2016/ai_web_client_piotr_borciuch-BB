@@ -15,21 +15,21 @@ export class TablesService extends Service{
     }
 
     getAllTables(){
-        this.restApi.getRequest("/tables", this);
+        this.restApi.getRequest("tables", this);
     }
 
     updateTable(table: RestaurantTable){
-        this.restApi.putRequest("/tables/table", table, this);
+        this.restApi.putRequest("tables/table", table, this);
     }
 
     createNewTable(table: RestaurantTable){
-        this.restApi.postRequest("/tables/table", table, this);
+        this.restApi.postRequest("tables/table", table, this);
     }
 
 
     handle(response:Response) {
        if(response.status == 200){
-           if(response.json() != null){
+           if(response.text() != ""){
                this.arrayHandler.handle(this.mapObject(JSON.parse(response.text())));
            }else{
                this.voidHandler.handle();

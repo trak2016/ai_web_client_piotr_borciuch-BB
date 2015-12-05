@@ -18,14 +18,14 @@ export class AuthRouting extends RouterOutlet {
 
         this.parentRouter = _parentRouter;
         this.publicRoutes = {
-            '/login': true,
+            '/main': true,
         };
     }
 
     activate(instruction: ComponentInstruction) {
         var url = this.parentRouter.lastNavigationAttempt;
         if (!this.publicRoutes[url] && sessionStorage.getItem("userLogin") == null) {
-            this.parentRouter.navigate(['/Login']);
+            this.parentRouter.navigate(['/Main']);
         }
         return super.activate(instruction);
     }

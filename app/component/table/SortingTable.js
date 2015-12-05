@@ -27,11 +27,11 @@ var SortingTable = (function () {
         this.select.next(selectedRow);
     };
     __decorate([
-        angular2_1.Input, 
+        angular2_1.Input(), 
         __metadata('design:type', Array)
     ], SortingTable.prototype, "columns");
     __decorate([
-        angular2_1.Input, 
+        angular2_1.Input(), 
         __metadata('design:type', Array)
     ], SortingTable.prototype, "rows");
     SortingTable = __decorate([

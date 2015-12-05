@@ -1,20 +1,19 @@
 import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES} from "angular2/angular2";
 import {TablesService} from "../../service/tables/TablesService";
 import {SortingTable} from "../table/SortingTable";
-import {TablesService} from "../../service/tables/TablesService";
 import {Row} from "../table/Row";
 import {Column} from "../table/Column";
-import {RestaurantTable} from "../../DTO/IDto";
+import {RestaurantTable, Error} from "../../DTO/IDto";
 import {SharedMemory} from "../../shared/SharedMemory";
-import {SharedMemory} from "../../shared/SharedMemory";
+
 import {ErrorsHandler, VoidHandler, ArrayHandler} from "../../handler/Handler";
 
 @Component({
-    selector: 'positions',
+    selector: 'tables',
     providers: [TablesService]
 })
 @View({
-    templateUrl: './app/view/employees.html',
+    templateUrl: './app/view/RestaurantTables.html',
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable]
 })
 export class RestaurantTableComponent{
@@ -32,6 +31,7 @@ export class RestaurantTableComponent{
         this.rows = [];
         this.columns = this.prepareColumns();
         this.selectedTable = new RestaurantTable(null);
+        this.tableService.getAllTables()
     }
 
     private prepareColumns(): Array<Column>{
@@ -47,7 +47,8 @@ export class RestaurantTableComponent{
         this.tableService.getAllTables();
     }
 
-    private onSelectedTable(event: Row){
+    onSelected(event: Row){
+        console.log(event);
         this.setSelectedTableById(event.getElementId());
     }
 
@@ -66,10 +67,11 @@ export class RestaurantTableComponent{
     }
 
     private onSaveTable(){
-        if(this.selectedTable.id == 0)
+        if(this.selectedTable.id == 0){
             this.tableService.createNewTable(this.selectedTable);
-        else
+        }else {
             this.tableService.updateTable(this.selectedTable);
+        }
     }
 
     private handleOnTableSave(){
@@ -78,6 +80,8 @@ export class RestaurantTableComponent{
 
     private handleTablesArray(tables: Array<RestaurantTable>){
         this.tables = tables;
+        this.mapToRows();
+        this.chooseTableToShow();
     }
 
     private registerHandlers(){
@@ -94,4 +98,40 @@ export class RestaurantTableComponent{
         this.tableService.registerErrorsHandler(errorsHandler);
         this.tableService.registerVoidHandler(voidHandler);
     }
+
+    private chooseTableToShow(){
+        let id: number = this.selectedTable.id;
+        if(id != 0){
+            this.setSelectedTableById(id);
+            if(this.selectedTable.id == 0 && this.tables.length > 0){
+                this.selectedTable = this.tables.pop();
+            }
+        }else{
+            this.setNewestTable();
+        }
+    }
+
+    private setNewestTable(){
+        if(this.tables.length){
+            this.tables.sort((first: RestaurantTable, second: RestaurantTable) => {
+                if(first.id > second.id) return 1;
+                else if(first.id < second.id) return -1;
+                else return 0;
+            });
+            this.selectedTable = this.tables[0];
+        }
+    }
+
+    private mapToRows(){
+        this.rows = new Array();
+        for(let i = 0; i < this.tables.length; i++){
+            let row: Row = new Row();
+            row.addCell("id", this.tables[i].id.toString());
+            row.addCell("tableNumber", this.tables[i].tableNumber.toString());
+            row.addCell("tableSeats", this.tables[i].seatsNumber.toString());
+            row.addCell("status", this.tables[i].status == "OCCUPIED" ? "Zajęty" : "Wolny");
+            this.rows.push(row);
+        }
+    }
 }
+

@@ -18,8 +18,8 @@ import {Row} from "./Row";
 
 export class SortingTable{
     private select: EventEmitter;
-    @Input private columns: Array<Column>;
-    @Input private rows: Array<Row>;
+    @Input() private columns: Array<Column>;
+    @Input() private rows: Array<Row>;
     private selectionListener: SelectionListener;
     private sorter: Sorter = new Sorter();
 

@@ -28,13 +28,13 @@ var AuthRouting = (function (_super) {
         _super.call(this, _elementRef, _loader, _parentRouter, nameAttr);
         this.parentRouter = _parentRouter;
         this.publicRoutes = {
-            '/login': true,
+            '/main': true,
         };
     }
     AuthRouting.prototype.activate = function (instruction) {
         var url = this.parentRouter.lastNavigationAttempt;
         if (!this.publicRoutes[url] && sessionStorage.getItem("userLogin") == null) {
-            this.parentRouter.navigate(['/Login']);
+            this.parentRouter.navigate(['/Main']);
         }
         return _super.prototype.activate.call(this, instruction);
     };

@@ -3,21 +3,21 @@ import {PositionService} from "../../service/positions/PositionService";
 import {SortingTable} from "../table/SortingTable";
 import {Column} from "../table/Column";
 import {Row} from "../table/Row";
-import {PositionDTO} from "../../DTO/IDto";
+import {PositionDTO, Error} from "../../DTO/IDto";
 import {ErrorsHandler, ArrayHandler, VoidHandler} from "../../handler/Handler";
 import {SharedMemory} from "../../shared/SharedMemory";
-import {SharedMemory} from "../../shared/SharedMemory";
-import {PositionDTO} from "../../DTO/IDto";
+import {EmployeesComponent} from "../employees/EmployeesComponent";
+
 
 @Component({
     selector: 'positions',
     providers: [ PositionService]
 })
 @View({
-    templateUrl: './app/view/employees.html',
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable]
+    templateUrl: './app/view/positions.html',
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable, EmployeesComponent]
 })
-export class Position{
+export class PositionComponent{
 
     private positionService: PositionService;
     private sharedMemory: SharedMemory;
@@ -25,11 +25,13 @@ export class Position{
     private rows: Array<Row>;
     private positions: Array<PositionDTO>;
     private selectedPosition: PositionDTO;
+    private isDisabled: boolean = false;
 
     constructor(positionService: PositionService, sharedMemory: SharedMemory){
         this.positionService = positionService;
         this.registerHandlers();
         this.rows = [];
+        this.sharedMemory = sharedMemory;
         this.columns = this.prepareColumns();
         this.selectedPosition = new PositionDTO(null);
         this.getAllPositions();
@@ -53,6 +55,18 @@ export class Position{
 
     private handlePositionsArray(positions: Array<PositionDTO>){
         this.positions = positions;
+        this.mapToRows()
+        this.choosePositionToShow();
+    }
+
+    private mapToRows(){
+        this.rows = new Array();
+        for(let i = 0; i < this.positions.length; i++){
+            let row: Row = new Row();
+            row.addCell("id", this.positions[i].id.toString());
+            row.addCell("name", this.positions[i].name);
+            this.rows.push(row);
+        }
     }
 
     private onEmployeeChange(event){
@@ -61,13 +75,16 @@ export class Position{
 
     private onSelectedPosition(event: Row){
         this.setSelectedPositionById(event.getElementId());
+        this.isDisabled = false;
     }
 
     private onNewPosition(){
         this.selectedPosition = new PositionDTO(null);
+        this.isDisabled = true;
     }
 
     private onSavePosition(){
+        this.sharedMemory.appErrors = [];
         if(this.selectedPosition.id == 0)
             this.positionService.savePosition(this.selectedPosition);
         else
@@ -79,6 +96,7 @@ export class Position{
         for(let i = 0; i < this.positions.length; i++){
             if(this.positions[i].id == id){
                 this.selectedPosition = this.positions[i];
+                this.isDisabled = false;
                 break;
             }
         }
@@ -98,5 +116,31 @@ export class Position{
         this.positionService.registerErrorsHandler(errorsHandler);
         this.positionService.registerVoidHandler(voidHandler);
     }
+
+    private choosePositionToShow(){
+        let id: number = this.selectedPosition.id;
+        if(id != 0){
+            this.setSelectedPositionById(id);
+            if(this.selectedPosition.id == 0 && this.positions.length > 0){
+                this.selectedPosition = this.positions.pop();
+            }
+        }else{
+            this.setNewestPosition();
+        }
+    }
+
+
+    private setNewestPosition(){
+        if(this.positions.length > 0){
+            this.positions.sort((first: PositionDTO, second: PositionDTO) => {
+                if(first.id > second.id) return 1;
+                else if(first.id < second.id) return -1;
+                else return 0;
+            });
+            this.selectedPosition = this.positions[0];
+        }
+
+    }
+
 }
 

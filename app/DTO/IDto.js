@@ -30,6 +30,8 @@ var EmployeeDTO = (function () {
         this.name = "";
         this.surname = "";
         this.status = "";
+        this.activeOrders = [];
+        this.inactiveOrders = [];
         if (json != null) {
             this.id = json["id"];
             this.authenticationData = new AuthDTO(json['authenticationData']['login'], "");
@@ -41,6 +43,7 @@ var EmployeeDTO = (function () {
         }
         else {
             this.roles = [];
+            this.status = "FIRED";
             this.position = new PositionDTO(null);
         }
     }
@@ -68,6 +71,7 @@ var EmployeeDTO = (function () {
     };
     EmployeeDTO.prototype.createRoleFromPrivileges = function (privileges) {
         this.roles = new Array();
+        console.log(privileges);
         for (var i = 0; i < privileges.length; i++) {
             var role = new RoleDTO(null);
             role.name = privileges[i];
@@ -88,6 +92,7 @@ var PositionDTO = (function () {
         if (json != null) {
             this.id = json["id"];
             this.name = json["name"];
+            this.prepareEmployees(json["employees"]);
         }
     }
     PositionDTO.prototype.prepareEmployees = function (json) {
