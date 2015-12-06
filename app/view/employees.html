@@ -1,89 +1,136 @@
-<div>
-    <h3>Lista pracowników</h3>
-    <sortingtable [rows]="rows" [columns]="columns" (select)="onSelected($event)"></sortingtable>
-</div>
-<div>
-    <h4>Zarządzaj pracownikiem</h4>
-    <form (ng-submit)="onSaveEmployee()" #hf="form" >
-        <div class="form_group">
-            <label>Id</label> {{selectedEmployee.id}}
-        </div>
-        <div class="form_group">
-            <label>Imię: </label>
-            <input type="text" class="form_style" required
-                   [(ng-model)]="selectedEmployee.name" placeholder="Imię" #name="form">
-        </div>
-        <div class="form_group">
-            <label>Nazwisko: </label>
-            <input type="text" class="form_style" required
-                   [(ng-model)]="selectedEmployee.surname" placeholder="Nazwisko" #name="form">
-        </div>
-        <div class="form_group">
-            <label>Stanowisko: </label>
-            <select #select (change)="changeEmployeePosition(select.value)">
-                <option *ng-for="#position of positions" [selected]="position.name == selectedEmployee.position.name"
-                 [value]="position.name">{{position.name}}</option>
-            </select>
-        </div>
+<div class="col-md-6">
+    <div>
+        <h3 align="left">Lista pracowników</h3>
+        <sortingtable [rows]="rows" [columns]="columns" (select)="onSelected($event)"></sortingtable>
+    </div>
+    <div>
+        <h4 align="center">Zarządzaj pracownikiem</h4>
 
-        <div class="form_group">
-            <p>Status: </p>
-            <label>
-                <input #employedck name="status" type="radio" (change)="changeEmployeeStatus($event)" [checked]="isEmployed"> </option>
-                Zatrudniony
-            </label>
-            <label >
-                <input #firedck name="status" type="radio" (change)="changeEmployeeStatus($event)" [checked]="!isEmployed"></option>
-                Zwolniony
-            </label>
-        </div>
+        <form (ng-submit)="onSaveEmployee()" #hf="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="id">Id: </label>
 
-        <div class="form_group">
-            <p>Role: </p>
-            <label>
-                <input #waiterck name="roles" type="checkbox" value="WAITER" [(ng-model)]="waiter" (change)="waiter = waiterck.checked"> </option>
-                Kelner
-            </label>
-            <label >
-                <input #cookck name="roles" type="checkbox" value="COOK" [(ng-model)]="cook"  (change)="cook = cookck.checked"></option>
-                Kucharz
-            </label>
-
-                <label>
-                    <input #managerck name="roles" type="checkbox" value="MANAGER" [(ng-model)]="manager"  (change)="manager = managerck.checked"></option>
-                    Menedżer
-                </label>
-                <label>
-                    <input #ownerck name="roles" type="checkbox" value="OWNER" [(ng-model)]="owner"  (change)="owner = ownerck.checked"></option>
-                    Właściciel
-                </label>
+                <div class="col-sm-10">
+                    <input id="id" value="{{selectedEmployee.id}}" class="form-control" readonly>
+                </div>
             </div>
-        <div *ng-if="isNew" class="form_group">
-            <div>
-                <label>Login: </label>
-                <input type="text" class="form_style" required
-                       [(ng-model)]="login" placeholder="Login" #name="form">
-            </div>
-            <div>
-                <label>Hasło: </label>
-                <input type="password" class="form_style" required
-                       [(ng-model)]="password" placeholder="Hasło" #name="form">
-            </div>
-            <div>
-                <label>Potwierdź hasło: </label>
-                <input type="password" class="form_style" required
-                       [(ng-model)]="confirm" placeholder="Potwierdź hasło" #name="form">
-                <div *ng-if="passwordMismatch">Hasła są różne!</div>
-            </div>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="name">Imię: </label>
 
-        <button  class="form_button">Zapisz</button>
+                <div class="col-sm-10">
+                    <input id="name" type="text" class="form-control" required
+                           [(ng-model)]="selectedEmployee.name" placeholder="Imię" #name="form">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="surname">Nazwisko: </label>
 
-    </form>
+                <div class="col-sm-10">
+                    <input id="surname" type="text" class="form-control" required
+                           [(ng-model)]="selectedEmployee.surname" placeholder="Nazwisko" #name="form">
+                </div>
 
-<button class="form_button"
-        (click)="onNewEmployee()">Nowy pracownik</button>
-<button *ng-if="!isNew" class="form_button"
-        (click)="onChangeStatus()">{{statusButtonDescription}}
-</button>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="position">Stanowisko: </label>
+
+                <div class="col-sm-10">
+                    <select id="position" class="form-control" #select (change)="changeEmployeePosition(select.value)">
+                        <option *ng-for="#position of positions"
+                                [selected]="position.name == selectedEmployee.position.name"
+                                [value]="position.name">{{position.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="status">Status: </label>
+
+                <div id="status" class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input #employedck name="status" type="radio" (change)="changeEmployeeStatus($event)"
+                               [checked]="isEmployed"> </option>
+                        Zatrudniony
+                    </label>
+                    <label class="checkbox-inline">
+                        <input #firedck name="status" type="radio" (change)="changeEmployeeStatus($event)"
+                               [checked]="!isEmployed"></option>
+                        Zwolniony
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="roles">Role: </label>
+
+                <div id="roles" class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input #waiterck name="roles" type="checkbox" value="WAITER" [(ng-model)]="waiter"
+                               (change)="waiter = waiterck.checked"> </option>
+                        Kelner
+                    </label>
+                    <label class="checkbox-inline">
+                        <input #cookck name="roles" type="checkbox" value="COOK" [(ng-model)]="cook"
+                               (change)="cook = cookck.checked"></option>
+                        Kucharz
+                    </label>
+
+                    <label class="checkbox-inline">
+                        <input #managerck name="roles" type="checkbox" value="MANAGER" [(ng-model)]="manager"
+                               (change)="manager = managerck.checked"></option>
+                        Menedżer
+                    </label>
+                    <label class="checkbox-inline">
+                        <input #ownerck name="roles" type="checkbox" value="OWNER" [(ng-model)]="owner"
+                               (change)="owner = ownerck.checked"></option>
+                        Właściciel
+                    </label>
+                </div>
+
+            </div>
+            <div *ng-if="isNew" class="form-group">
+                <div>
+                    <label class="col-sm-2 control-label" for="login">Login: </label>
+
+                    <div class="col-sm-10">
+                        <input id="login" type="text" class="form-control" required
+                               [(ng-model)]="login" placeholder="Login" #name="form">
+                    </div>
+
+                </div>
+                <div>
+                    <label class="col-sm-2 control-label" for="password">Hasło: </label>
+
+                    <div class="col-sm-10">
+                        <input id="password" type="password" class="form-control" required
+                               [(ng-model)]="password" placeholder="Hasło" #name="form">
+                    </div>
+
+                </div>
+                <div>
+                    <label class="col-sm-2 control-label" for="confirm">Potwierdź hasło: </label>
+
+                    <div class="col-sm-10">
+                        <input id="confirm" type="password" class="form-control" required
+                               [(ng-model)]="confirm" placeholder="Potwierdź hasło" #name="form">
+                    </div>
+
+
+                    <div *ng-if="passwordMismatch" class="alert alert-danger">Hasła są różne!</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary">Zapisz</button>
+
+        </form>
+
+        <button class="btn btn-primary"
+                (click)="onNewEmployee()">Nowy pracownik
+        </button>
+        <button *ng-if="!isNew" class="btn btn-primary"
+                (click)="onChangeStatus()">{{statusButtonDescription}}
+        </button>
+    </div>
 </div>

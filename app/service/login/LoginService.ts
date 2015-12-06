@@ -25,7 +25,6 @@ export class LoginService extends Service{
 
 
     handle(response:Response) {
-        console.log(response.text());
        if(response.status == 200){
            let employeeData: EmployeeDTO = new EmployeeDTO(response.json());
            this.putUserDataInMemory(employeeData);

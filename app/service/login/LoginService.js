@@ -34,7 +34,6 @@ var LoginService = (function (_super) {
         this.restApi.postRequest("auth/login", auth, this);
     };
     LoginService.prototype.handle = function (response) {
-        console.log(response.text());
         if (response.status == 200) {
             var employeeData = new IDto_1.EmployeeDTO(response.json());
             this.putUserDataInMemory(employeeData);

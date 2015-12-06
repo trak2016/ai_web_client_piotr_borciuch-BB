@@ -138,4 +138,46 @@ var RestaurantTable = (function () {
     return RestaurantTable;
 })();
 exports.RestaurantTable = RestaurantTable;
+var PaymentDTO = (function () {
+    function PaymentDTO(json) {
+        this.id = 0;
+        this.orderID = 0;
+        this.totalAmount = "0.0";
+        this.creationDate = "";
+        this.status = "CLOSED";
+        if (json != null) {
+            this.id = json["id"];
+            this.orderID = json["orderID"];
+            this.totalAmount = json["totalAmount"];
+            this.creationDate = json["creationDate"];
+            this.status = json["status"];
+        }
+    }
+    PaymentDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return PaymentDTO;
+})();
+exports.PaymentDTO = PaymentDTO;
+var DailyReportDTO = (function () {
+    function DailyReportDTO(json) {
+        this.id = 0;
+        this.payments = [];
+        this.reportDate = "";
+        this.totalAmount = "0.0";
+        if (json != null) {
+            this.id = json["id"];
+            this.reportDate = json["reportDate"];
+            this.totalAmount = json["totalAmount"];
+            for (var i = 0; i < json["payments"].length; i++) {
+                this.payments.push(new PaymentDTO(json["payments"][i]));
+            }
+        }
+    }
+    DailyReportDTO.prototype.toJson = function () {
+        return JSON.stringify(this);
+    };
+    return DailyReportDTO;
+})();
+exports.DailyReportDTO = DailyReportDTO;
 //# sourceMappingURL=IDto.js.map

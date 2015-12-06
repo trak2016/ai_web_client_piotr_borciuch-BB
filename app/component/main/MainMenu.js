@@ -15,7 +15,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var angular2_1 = require('angular2/angular2');
 var router_1 = require('angular2/router');
 var SharedMemory_1 = require("../../shared/SharedMemory");
-var LoginComponent_1 = require("../login/LoginComponent");
 var MainMenu = (function () {
     function MainMenu(sharedMemory) {
         this.sharedMemory = sharedMemory;
@@ -25,7 +24,6 @@ var MainMenu = (function () {
     MainMenu.prototype.onLogin = function (event) {
         this.hasAdminRole = (parseInt(this.sharedMemory.userPrivileges) & parseInt("1100", 2)) > 3;
         this.isLogged = this.sharedMemory.userLogin != null;
-        console.log(sessionStorage.getItem("authToken"));
     };
     MainMenu = __decorate([
         angular2_1.Component({
@@ -33,7 +31,7 @@ var MainMenu = (function () {
         }),
         angular2_1.View({
             templateUrl: './app/view/main.html',
-            directives: [router_1.ROUTER_DIRECTIVES, angular2_1.NgIf, LoginComponent_1.LoginComponent],
+            directives: [router_1.ROUTER_DIRECTIVES, angular2_1.NgIf],
         }), 
         __metadata('design:paramtypes', [SharedMemory_1.SharedMemory])
     ], MainMenu);

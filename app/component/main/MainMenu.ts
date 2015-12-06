@@ -11,7 +11,7 @@ import {LoginComponent} from "../login/LoginComponent";
 @View(
     {
         templateUrl: './app/view/main.html',
-        directives: [ROUTER_DIRECTIVES, NgIf, LoginComponent],
+        directives: [ROUTER_DIRECTIVES, NgIf],
     }
 )
 
@@ -30,7 +30,6 @@ export class MainMenu{
     onLogin(event: any){
         this.hasAdminRole = (parseInt(this.sharedMemory.userPrivileges) & parseInt("1100", 2)) > 3;
         this.isLogged = this.sharedMemory.userLogin != null;
-        console.log(sessionStorage.getItem("authToken"));
     }
 
 }

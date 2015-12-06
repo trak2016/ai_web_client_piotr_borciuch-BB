@@ -14,6 +14,7 @@ var http_1 = require('angular2/http');
 var router_1 = require('angular2/router');
 var MainMenu_1 = require('./main/MainMenu');
 var RestApi_1 = require("../api/RestApi");
+var LoginComponent_1 = require("./login/LoginComponent");
 var AuthRouting_1 = require('./routing/AuthRouting');
 var PositionComponent_1 = require("./position/PositionComponent");
 var SharedMemory_1 = require("../shared/SharedMemory");
@@ -30,7 +31,7 @@ var App = (function () {
     App.prototype.logout = function () {
         sessionStorage.clear();
         this.sharedMemory.clear();
-        this.router.navigate(['/Main']);
+        this.router.navigate(['/Login']);
     };
     App = __decorate([
         angular2_1.Component({
@@ -43,6 +44,7 @@ var App = (function () {
         router_1.RouteConfig([
             new router_1.Route({ path: '/', component: MainMenu_1.MainMenu, as: 'Main' }),
             new router_1.Route({ path: '/main', component: MainMenu_1.MainMenu, as: 'Main' }),
+            new router_1.Route({ path: '/login', component: LoginComponent_1.LoginComponent, as: 'Login' }),
             new router_1.Route({ path: '/room', component: RestaurantTableComponent_1.RestaurantTableComponent, as: 'Room' }),
             new router_1.Route({ path: '/employees', component: PositionComponent_1.PositionComponent, as: 'Employees' })
         ]), 

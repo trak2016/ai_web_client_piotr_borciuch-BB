@@ -27,6 +27,7 @@ import {RestaurantTableComponent} from "./restaurantTable/RestaurantTableCompone
     [
         new Route({path: '/', component: MainMenu, as: 'Main'}),
         new Route({path: '/main', component: MainMenu, as: 'Main'}),
+        new Route({path: '/login', component: LoginComponent, as: 'Login'}),
         new Route({path: '/room', component: RestaurantTableComponent, as: 'Room'}),
         new Route({path: '/employees', component: PositionComponent, as: 'Employees'})
 
@@ -49,7 +50,7 @@ export class App {
     public logout(){
         sessionStorage.clear();
         this.sharedMemory.clear();
-        this.router.navigate(['/Main']);
+        this.router.navigate(['/Login']);
     }
 
 }

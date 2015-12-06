@@ -17,7 +17,6 @@ var LoginComponent = (function () {
     function LoginComponent(loginService, router, sharedMemory) {
         this.sharedMemory = sharedMemory;
         this.loginService = loginService;
-        this.afterlogin = new angular2_1.EventEmitter();
         this.login = "";
         this.password = "";
         this.registerHandlers();
@@ -34,7 +33,7 @@ var LoginComponent = (function () {
     LoginComponent.prototype.handleObject = function (dto) {
         this.sharedMemory.userLogin = sessionStorage.getItem("userLogin");
         this.sharedMemory.userPrivileges = sessionStorage.getItem("userPrivileges");
-        this.afterlogin.next(dto);
+        this.router.navigate(['/Main']);
     };
     LoginComponent.prototype.registerHandlers = function () {
         var _this = this;
@@ -51,7 +50,6 @@ var LoginComponent = (function () {
         angular2_1.Component({
             selector: 'login',
             providers: [LoginService_1.LoginService],
-            events: ['afterlogin']
         }),
         angular2_1.View({
             templateUrl: './app/view/login.html',

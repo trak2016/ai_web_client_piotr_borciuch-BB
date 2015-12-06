@@ -7,11 +7,7 @@ import {Service as ResponseHandler} from "../service/service";
 export class RestApi {
     private http: Http;
     private SERVLET_CONTEXT: string = "http://localhost:8333/Restaurant/";
-    //Response object, returned by http request, does not contain headers,
-    // so auth token is set manual
-    //
-    private TOKEN = "603A3F30B2BD585E11BA757719F3FF717CB6F9F29580C8A2990C3BB3761E344C3C807E84139BD15E1963AA5A87F31DE37AAE" +
-    "4FCA64682DF8";
+
 
     constructor(@Inject (Http)http: Http){
 
@@ -25,6 +21,15 @@ export class RestApi {
             handler.handle(response);
             this.doAction(response);
         })
+    }
+
+    postRequest(url: string, handler: ResponseHandler){
+        let headers: Headers = this.prepareDefaultHeaders();
+        this.http.post(this.SERVLET_CONTEXT + url, "", {headers: headers})
+            .subscribe((response: Response) => {
+                handler.handle(response);
+                this.doAction(response);
+            })
     }
 
     putRequest(url: string, object: IDto, handler: ResponseHandler){

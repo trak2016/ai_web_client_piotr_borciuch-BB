@@ -14,7 +14,7 @@ import {SharedMemory} from "../../shared/SharedMemory"
 @Component({
     selector: 'login',
     providers: [LoginService],
-    events: ['afterlogin']
+
 })
 @View(
     {
@@ -26,7 +26,7 @@ import {SharedMemory} from "../../shared/SharedMemory"
 export class LoginComponent{
 
     private sharedMemory: SharedMemory;
-    private afterlogin: EventEmitter;
+
     private router: Router;
     private loginService: LoginService;
     public login: string;
@@ -35,7 +35,7 @@ export class LoginComponent{
     constructor(loginService: LoginService, router: Router, sharedMemory: SharedMemory){
         this.sharedMemory = sharedMemory;
         this.loginService = loginService;
-        this.afterlogin = new EventEmitter();
+
         this.login = "";
         this.password = "";
         this.registerHandlers();
@@ -57,7 +57,7 @@ export class LoginComponent{
     handleObject(dto:EmployeeDTO) {
         this.sharedMemory.userLogin = sessionStorage.getItem("userLogin");
         this.sharedMemory.userPrivileges = sessionStorage.getItem("userPrivileges");
-        this.afterlogin.next(dto);
+        this.router.navigate(['/Main']);
     }
 
 

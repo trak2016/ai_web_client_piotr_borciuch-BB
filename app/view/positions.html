@@ -1,25 +1,39 @@
-<div>
-    <h3>Lista stanowisk</h3>
-    <sortingtable [rows]="rows" [columns]="columns" (select)="onSelectedPosition($event)"></sortingtable>
-    <div>
-        <form (ng-submit)="onSavePosition()" #hf="form">
-            <div class="form_group">
-                <label>Id</label> {{selectedPosition.id}}
-            </div>
-            <div class="form_group">
-                <label>Nazwa: </label>
-                <input type="text" class="form_style" required
-                       [(ng-model)]="selectedPosition.name" placeholder="Nazwa" #name="form">
-            </div>
+<div class="row">
+    <div class="col-md-4">
+        <div>
+            <h3 align="center">Lista stanowisk</h3>
+            <sortingtable [rows]="rows" [columns]="columns" (select)="onSelectedPosition($event)"></sortingtable>
+            <div>
+                <h4 align="center">Zarządzaj stanowiskiem</h4>
+
+                <form (ng-submit)="onSavePosition()" #hf="form" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id">Id: </label>
+
+                        <div class="col-sm-10">
+                            <input id="id" type="text" class="form-control" value="{{selectedPosition.id}}" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="name">Nazwa: </label>
+
+                        <div class="col-sm-10">
+                            <input id="name" type="text" class="form-control" required
+                                   [(ng-model)]="selectedPosition.name" placeholder="Nazwa" #name="form">
+                        </div>
+                    </div>
 
 
-    <button  class="form_button">Zapisz</button>
-    </form>
+                    <button class="btn btn-primary">Zapisz</button>
+                </form>
+            </div>
+        </div>
+        <button class="btn btn-primary"
+                (click)="onNewPosition()">Nowe stanowisko
+        </button>
+    </div>
+    <div class="row">
+        <employees *ng-if="!isDisabled" [position]="selectedPosition.name" [positions]="positions"
+                   [employees]="selectedPosition.employees" (changed)="onEmployeeChange($event)"></employees>
     </div>
 </div>
-<button class="form_button"
-        (click)="onNewPosition()">Nowe stanowisko</button>
-<div *ng-if="isDisables">
-    <p>Aby zarządzać pracownikami wybierz jedno z dostępnych stanowisk lub zakończ tworzenie nowego</p>
-</div>
-<employees  *ng-if="!isDisabled" [position]="selectedPosition.name" [positions]="positions" [employees]="selectedPosition.employees" (changed)="onEmployeeChange($event)"></employees>

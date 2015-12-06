@@ -17,17 +17,21 @@ var angular2_1 = require('angular2/angular2');
 var RestApi = (function () {
     function RestApi(http) {
         this.SERVLET_CONTEXT = "http://localhost:8333/Restaurant/";
-        //Response object, returned by http request, does not contain headers,
-        // so auth token is set manual
-        //
-        this.TOKEN = "603A3F30B2BD585E11BA757719F3FF717CB6F9F29580C8A2990C3BB3761E344C3C807E84139BD15E1963AA5A87F31DE37AAE" +
-            "4FCA64682DF8";
         this.http = http;
     }
     RestApi.prototype.postRequest = function (url, object, handler) {
         var _this = this;
         var headers = this.prepareDefaultHeaders();
         this.http.post(this.SERVLET_CONTEXT + url, object.toJson(), { headers: headers })
+            .subscribe(function (response) {
+            handler.handle(response);
+            _this.doAction(response);
+        });
+    };
+    RestApi.prototype.postRequest = function (url, handler) {
+        var _this = this;
+        var headers = this.prepareDefaultHeaders();
+        this.http.post(this.SERVLET_CONTEXT + url, "", { headers: headers })
             .subscribe(function (response) {
             handler.handle(response);
             _this.doAction(response);

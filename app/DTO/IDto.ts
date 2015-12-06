@@ -178,3 +178,49 @@ export class RestaurantTable implements IDto{
         return JSON.stringify(this);
     }
 }
+
+export class PaymentDTO implements IDto{
+    public id: number = 0;
+    public orderID: number = 0;
+    public totalAmount: string = "0.0";
+    public creationDate: string = "";
+    public status: string = "CLOSED";
+
+    constructor(json: Object){
+        if(json != null){
+            this.id = json["id"];
+            this.orderID = json["orderID"];
+            this.totalAmount = json["totalAmount"];
+            this.creationDate = json["creationDate"];
+            this.status = json["status"];
+        }
+    }
+
+    toJson():string {
+        return JSON.stringify(this);
+    }
+}
+
+export class DailyReportDTO implements IDto{
+
+    public id: number = 0;
+    public payments: Array<PaymentDTO> = [];
+    public reportDate: string = "";
+    public totalAmount: string = "0.0";
+
+    constructor(json: Object){
+        if(json != null){
+            this.id = json["id"];
+            this.reportDate = json["reportDate"];
+            this.totalAmount = json["totalAmount"];
+            for(let i = 0; i < json["payments"].length; i++){
+                this.payments.push(new PaymentDTO(json["payments"][i]));
+            }
+        }
+    }
+
+
+    toJson():string {
+        return JSON.stringify(this);
+    }
+}
