@@ -12,6 +12,7 @@ import {PositionComponent} from "./position/PositionComponent";
 import {Error} from "../DTO/IDto";
 import {SharedMemory} from "../shared/SharedMemory"
 import {RestaurantTableComponent} from "./restaurantTable/RestaurantTableComponent";
+import {ReportComponent} from "./reports/ReportComponent";
 
 @Component({
     selector: 'app'
@@ -29,7 +30,8 @@ import {RestaurantTableComponent} from "./restaurantTable/RestaurantTableCompone
         new Route({path: '/main', component: MainMenu, as: 'Main'}),
         new Route({path: '/login', component: LoginComponent, as: 'Login'}),
         new Route({path: '/room', component: RestaurantTableComponent, as: 'Room'}),
-        new Route({path: '/employees', component: PositionComponent, as: 'Employees'})
+        new Route({path: '/employees', component: PositionComponent, as: 'Employees'}),
+        new Route({path: '/reports', component: ReportComponent, as: 'Reports'})
 
     ]
 )

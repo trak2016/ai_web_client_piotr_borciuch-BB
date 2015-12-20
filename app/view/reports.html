@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-md-6">
+        <button class="btn btn-primary"
+                (click)="closeDay()">Zamknij dzień</button>
+        <h4 align="center">Wyszukaj raporty</h4>
+        <form (ng-submit)="findReports()" #hf="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label"  for="startDate">Data początkowa: </label>
+
+                <div class="col-sm-10">
+                    <input id="startDate" [(ng-model)]="startDate" class="form-control" type="date" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="endDate">Data końcowa: </label>
+
+                <div class="col-sm-10">
+                    <input id="endDate" [(ng-model)]="endDate" class="form-control" type="date" required>
+                </div>
+            </div>
+
+
+            <button class="btn btn-primary">Wyszukaj</button>
+        </form>
+    </div>
+    <div class="col-md-5" >
+        <h4 align="center">Wybrane raporty</h4>
+        <customtable [rows]="reportsRows" [columns]="reportsColumns" (select)="onSelectReport($event)"></customtable>
+        <h4 align="center">Płatności raportu o identyfikatorze: {{selectedReport.id}}</h4>
+        <customtable [rows]="paymentsRows" [columns]="paymentsColumns" (select)="doNothing($event)"></customtable>
+    </div>
+</div>

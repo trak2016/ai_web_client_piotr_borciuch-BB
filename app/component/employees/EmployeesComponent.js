@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var angular2_1 = require('angular2/angular2');
-var SortingTable_1 = require("../table/SortingTable");
+var CustomTable_1 = require("../table/CustomTable");
 var EmployeeService_1 = require("../../service/employees/EmployeeService");
 var IDto_1 = require("../../DTO/IDto");
 var Column_1 = require("../table/Column");
@@ -63,12 +63,10 @@ var EmployeesComponent = (function () {
         }
     };
     EmployeesComponent.prototype.handleError = function (errors) {
-        console.log(errors);
         this.sharedMemory.appErrors = errors;
     };
     EmployeesComponent.prototype.onSaveEmployee = function () {
         this.sharedMemory.appErrors = [];
-        console.log(this.selectedEmployee.status);
         this.prepareEmployeeToSave();
         this.passwordMismatch = false;
         if (this.selectedEmployee.id == 0) {
@@ -103,6 +101,7 @@ var EmployeesComponent = (function () {
         }
     };
     EmployeesComponent.prototype.onNewEmployee = function () {
+        this.sharedMemory.appErrors = [];
         this.selectedEmployee = new IDto_1.EmployeeDTO(null);
         this.selectedEmployee.position.name = this.position;
         this.isNew = true;
@@ -113,6 +112,7 @@ var EmployeesComponent = (function () {
         this.waiter = this.cook = this.manager = this.owner = false;
     };
     EmployeesComponent.prototype.onSelected = function (event) {
+        this.sharedMemory.appErrors = [];
         this.setSelectedEmployeeById(event.getElementId());
         this.isNew = false;
         //sets checkboxs with employee's roles
@@ -230,7 +230,7 @@ var EmployeesComponent = (function () {
         }),
         angular2_1.View({
             templateUrl: './app/view/employees.html',
-            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, SortingTable_1.SortingTable]
+            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, CustomTable_1.CustomTable]
         }), 
         __metadata('design:paramtypes', [EmployeeService_1.EmployeeService, SharedMemory_1.SharedMemory])
     ], EmployeesComponent);

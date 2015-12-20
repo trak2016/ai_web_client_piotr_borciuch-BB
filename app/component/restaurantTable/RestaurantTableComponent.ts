@@ -1,6 +1,6 @@
 import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES} from "angular2/angular2";
 import {TablesService} from "../../service/tables/TablesService";
-import {SortingTable} from "../table/SortingTable";
+import {CustomTable} from "../table/CustomTable";
 import {Row} from "../table/Row";
 import {Column} from "../table/Column";
 import {RestaurantTable, Error} from "../../DTO/IDto";
@@ -14,7 +14,7 @@ import {ErrorsHandler, VoidHandler, ArrayHandler} from "../../handler/Handler";
 })
 @View({
     templateUrl: './app/view/RestaurantTables.html',
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable]
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, CustomTable]
 })
 export class RestaurantTableComponent{
     private tableService: TablesService;
@@ -44,11 +44,12 @@ export class RestaurantTableComponent{
     }
 
     private getAllTables(){
+        this.sharedMemory.appErrors = [];
         this.tableService.getAllTables();
     }
 
     onSelected(event: Row){
-        console.log(event);
+        this.sharedMemory.appErrors = [];
         this.setSelectedTableById(event.getElementId());
     }
 
@@ -63,10 +64,12 @@ export class RestaurantTableComponent{
     }
 
     private onNewTable(){
+        this.sharedMemory.appErrors = [];
         this.selectedTable = new RestaurantTable(null);
     }
 
     private onSaveTable(){
+        this.sharedMemory.appErrors = [];
         if(this.selectedTable.id == 0){
             this.tableService.createNewTable(this.selectedTable);
         }else {

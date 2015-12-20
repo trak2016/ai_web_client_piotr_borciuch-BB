@@ -19,6 +19,7 @@ var AuthRouting_1 = require('./routing/AuthRouting');
 var PositionComponent_1 = require("./position/PositionComponent");
 var SharedMemory_1 = require("../shared/SharedMemory");
 var RestaurantTableComponent_1 = require("./restaurantTable/RestaurantTableComponent");
+var ReportComponent_1 = require("./reports/ReportComponent");
 var App = (function () {
     function App(router, sharedMemory) {
         this.router = router;
@@ -46,7 +47,8 @@ var App = (function () {
             new router_1.Route({ path: '/main', component: MainMenu_1.MainMenu, as: 'Main' }),
             new router_1.Route({ path: '/login', component: LoginComponent_1.LoginComponent, as: 'Login' }),
             new router_1.Route({ path: '/room', component: RestaurantTableComponent_1.RestaurantTableComponent, as: 'Room' }),
-            new router_1.Route({ path: '/employees', component: PositionComponent_1.PositionComponent, as: 'Employees' })
+            new router_1.Route({ path: '/employees', component: PositionComponent_1.PositionComponent, as: 'Employees' }),
+            new router_1.Route({ path: '/reports', component: ReportComponent_1.ReportComponent, as: 'Reports' })
         ]), 
         __metadata('design:paramtypes', [router_1.Router, SharedMemory_1.SharedMemory])
     ], App);

@@ -1,6 +1,6 @@
 import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, OnChanges, SimpleChange,
     bootstrap, Inject, EventEmitter, Input} from 'angular2/angular2';
-import {SortingTable} from "../table/SortingTable";
+import {CustomTable} from "../table/CustomTable";
 import {EmployeeService} from "../../service/employees/EmployeeService";
 import {EmployeeDTO, PositionDTO} from "../../DTO/IDto";
 import {ArrayHandler, ErrorsHandler} from "../../handler/Handler";
@@ -20,7 +20,7 @@ import {SharedMemory} from "../../shared/SharedMemory";
 })
 @View({
     templateUrl: './app/view/employees.html',
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable]
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, CustomTable]
 })
 export class EmployeesComponent implements OnChanges{
 
@@ -98,13 +98,13 @@ export class EmployeesComponent implements OnChanges{
     }
 
     private handleError(errors:Array<Error>) {
-        console.log(errors)
+
         this.sharedMemory.appErrors = errors;
     }
 
     onSaveEmployee(){
         this.sharedMemory.appErrors = [];
-        console.log(this.selectedEmployee.status);
+
         this.prepareEmployeeToSave();
         this.passwordMismatch = false;
         if(this.selectedEmployee.id == 0){
@@ -140,6 +140,7 @@ export class EmployeesComponent implements OnChanges{
     }
 
     onNewEmployee(){
+        this.sharedMemory.appErrors = [];
         this.selectedEmployee = new EmployeeDTO(null);
         this.selectedEmployee.position.name = this.position;
         this.isNew = true;
@@ -151,6 +152,7 @@ export class EmployeesComponent implements OnChanges{
     }
 
     onSelected(event: Row) {
+        this.sharedMemory.appErrors = [];
         this.setSelectedEmployeeById(event.getElementId());
         this.isNew = false;
         //sets checkboxs with employee's roles

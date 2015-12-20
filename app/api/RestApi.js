@@ -22,16 +22,8 @@ var RestApi = (function () {
     RestApi.prototype.postRequest = function (url, object, handler) {
         var _this = this;
         var headers = this.prepareDefaultHeaders();
-        this.http.post(this.SERVLET_CONTEXT + url, object.toJson(), { headers: headers })
-            .subscribe(function (response) {
-            handler.handle(response);
-            _this.doAction(response);
-        });
-    };
-    RestApi.prototype.postRequest = function (url, handler) {
-        var _this = this;
-        var headers = this.prepareDefaultHeaders();
-        this.http.post(this.SERVLET_CONTEXT + url, "", { headers: headers })
+        var json = object != null ? object.toJson() : "";
+        this.http.post(this.SERVLET_CONTEXT + url, json, { headers: headers })
             .subscribe(function (response) {
             handler.handle(response);
             _this.doAction(response);

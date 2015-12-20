@@ -1,6 +1,6 @@
 import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES} from "angular2/angular2";
 import {PositionService} from "../../service/positions/PositionService";
-import {SortingTable} from "../table/SortingTable";
+import {CustomTable} from "../table/CustomTable";
 import {Column} from "../table/Column";
 import {Row} from "../table/Row";
 import {PositionDTO, Error} from "../../DTO/IDto";
@@ -15,7 +15,7 @@ import {EmployeesComponent} from "../employees/EmployeesComponent";
 })
 @View({
     templateUrl: './app/view/positions.html',
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SortingTable, EmployeesComponent]
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, CustomTable, EmployeesComponent]
 })
 export class PositionComponent{
 
@@ -46,6 +46,7 @@ export class PositionComponent{
     }
 
     private getAllPositions(){
+        this.sharedMemory.appErrors = [];
         this.positionService.getAllPositions();
     }
 
@@ -70,20 +71,24 @@ export class PositionComponent{
     }
 
     private onEmployeeChange(event){
+        this.sharedMemory.appErrors = [];
         this.getAllPositions();
     }
 
     private onSelectedPosition(event: Row){
+        this.sharedMemory.appErrors = [];
         this.setSelectedPositionById(event.getElementId());
         this.isDisabled = false;
     }
 
     private onNewPosition(){
+        this.sharedMemory.appErrors = [];
         this.selectedPosition = new PositionDTO(null);
         this.isDisabled = true;
     }
 
     private onSavePosition(){
+
         this.sharedMemory.appErrors = [];
         if(this.selectedPosition.id == 0)
             this.positionService.savePosition(this.selectedPosition);

@@ -35,7 +35,6 @@ export class LoginComponent{
     constructor(loginService: LoginService, router: Router, sharedMemory: SharedMemory){
         this.sharedMemory = sharedMemory;
         this.loginService = loginService;
-
         this.login = "";
         this.password = "";
         this.registerHandlers();

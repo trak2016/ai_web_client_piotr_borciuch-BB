@@ -16,21 +16,15 @@ export class RestApi {
 
     postRequest(url: string, object: IDto, handler: ResponseHandler){
         let headers: Headers = this.prepareDefaultHeaders();
-        this.http.post(this.SERVLET_CONTEXT + url, object.toJson(), {headers: headers})
+        let json: string = object != null ? object.toJson() : ""
+        this.http.post(this.SERVLET_CONTEXT + url, json, {headers: headers})
         .subscribe((response: Response) => {
             handler.handle(response);
             this.doAction(response);
         })
     }
 
-    postRequest(url: string, handler: ResponseHandler){
-        let headers: Headers = this.prepareDefaultHeaders();
-        this.http.post(this.SERVLET_CONTEXT + url, "", {headers: headers})
-            .subscribe((response: Response) => {
-                handler.handle(response);
-                this.doAction(response);
-            })
-    }
+
 
     putRequest(url: string, object: IDto, handler: ResponseHandler){
         this.http.put(this.SERVLET_CONTEXT + url, object.toJson(), {headers: this.prepareDefaultHeaders()})
@@ -50,6 +44,7 @@ export class RestApi {
             })
 
     }
+
 
 
     private prepareDefaultHeaders(): Headers{

@@ -13,39 +13,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
  * Created by test on 2015-11-24.
  */
 var angular2_1 = require('angular2/angular2');
-var sorter_1 = require('./sorter');
-var SortingTable = (function () {
-    function SortingTable() {
-        this.sorter = new sorter_1.Sorter();
+var CustomTable = (function () {
+    function CustomTable() {
         this.select = new angular2_1.EventEmitter();
-        console.log(this.columns);
     }
-    SortingTable.prototype.sort = function (column) {
-        this.sorter.sort(column, this.rows);
-    };
-    SortingTable.prototype.onSelectedRow = function (selectedRow) {
+    CustomTable.prototype.onSelectedRow = function (selectedRow) {
         this.select.next(selectedRow);
     };
     __decorate([
-        angular2_1.Input(), 
-        __metadata('design:type', Array)
-    ], SortingTable.prototype, "columns");
+        angular2_1.Output(), 
+        __metadata('design:type', angular2_1.EventEmitter)
+    ], CustomTable.prototype, "select");
     __decorate([
         angular2_1.Input(), 
         __metadata('design:type', Array)
-    ], SortingTable.prototype, "rows");
-    SortingTable = __decorate([
+    ], CustomTable.prototype, "columns");
+    __decorate([
+        angular2_1.Input(), 
+        __metadata('design:type', Array)
+    ], CustomTable.prototype, "rows");
+    CustomTable = __decorate([
         angular2_1.Component({
-            selector: 'sortingtable',
-            events: ['select']
+            selector: 'customtable',
         }),
         angular2_1.View({
             templateUrl: './app/view/table.html',
             directives: [angular2_1.NgFor]
         }), 
         __metadata('design:paramtypes', [])
-    ], SortingTable);
-    return SortingTable;
+    ], CustomTable);
+    return CustomTable;
 })();
-exports.SortingTable = SortingTable;
-//# sourceMappingURL=SortingTable.js.map
+exports.CustomTable = CustomTable;
+//# sourceMappingURL=CustomTable.js.map

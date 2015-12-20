@@ -14,11 +14,11 @@ export class ReportService extends Service{
     }
 
     public closeDay(){
-        this.restApi.postRequest("reports/report", this);
+        this.restApi.postRequest("reports/report", null, this);
     }
 
     public getByDates(startDate: string, endDate: string){
-
+        this.restApi.getRequest("reports/" + startDate + "/" + endDate, this);
     }
 
     handle(response:Response) {
@@ -26,6 +26,8 @@ export class ReportService extends Service{
             this.objectHandler.handle(new DailyReportDTO(JSON.parse(response.text())));
         }else if(response.status == 200){
                 this.arrayHandler.handle(this.mapObjects(JSON.parse(response.text())));
+
+        }else{
             this.errorHandler.handle(this.mapError(JSON.parse(response.text())));
         }
     }
@@ -38,7 +40,5 @@ export class ReportService extends Service{
         return objects;
     }
 
-    private prepareJson(startDate: string, endDate: string): string{
-        
-    }
+
 }

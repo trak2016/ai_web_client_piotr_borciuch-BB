@@ -73,3 +73,5 @@ footer {
     display: block;
     width: 100%;
 }
+
+.top-buffer { margin-top:30px; }

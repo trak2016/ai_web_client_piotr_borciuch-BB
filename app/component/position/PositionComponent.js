@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var angular2_1 = require("angular2/angular2");
 var PositionService_1 = require("../../service/positions/PositionService");
-var SortingTable_1 = require("../table/SortingTable");
+var CustomTable_1 = require("../table/CustomTable");
 var Column_1 = require("../table/Column");
 var Row_1 = require("../table/Row");
 var IDto_1 = require("../../DTO/IDto");
@@ -35,6 +35,7 @@ var PositionComponent = (function () {
         ];
     };
     PositionComponent.prototype.getAllPositions = function () {
+        this.sharedMemory.appErrors = [];
         this.positionService.getAllPositions();
     };
     PositionComponent.prototype.handleOnPositionSave = function () {
@@ -55,13 +56,16 @@ var PositionComponent = (function () {
         }
     };
     PositionComponent.prototype.onEmployeeChange = function (event) {
+        this.sharedMemory.appErrors = [];
         this.getAllPositions();
     };
     PositionComponent.prototype.onSelectedPosition = function (event) {
+        this.sharedMemory.appErrors = [];
         this.setSelectedPositionById(event.getElementId());
         this.isDisabled = false;
     };
     PositionComponent.prototype.onNewPosition = function () {
+        this.sharedMemory.appErrors = [];
         this.selectedPosition = new IDto_1.PositionDTO(null);
         this.isDisabled = true;
     };
@@ -129,7 +133,7 @@ var PositionComponent = (function () {
         }),
         angular2_1.View({
             templateUrl: './app/view/positions.html',
-            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, SortingTable_1.SortingTable, EmployeesComponent_1.EmployeesComponent]
+            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, CustomTable_1.CustomTable, EmployeesComponent_1.EmployeesComponent]
         }), 
         __metadata('design:paramtypes', [PositionService_1.PositionService, SharedMemory_1.SharedMemory])
     ], PositionComponent);

@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var angular2_1 = require("angular2/angular2");
 var TablesService_1 = require("../../service/tables/TablesService");
-var SortingTable_1 = require("../table/SortingTable");
+var CustomTable_1 = require("../table/CustomTable");
 var Row_1 = require("../table/Row");
 var Column_1 = require("../table/Column");
 var IDto_1 = require("../../DTO/IDto");
@@ -35,10 +35,11 @@ var RestaurantTableComponent = (function () {
         ];
     };
     RestaurantTableComponent.prototype.getAllTables = function () {
+        this.sharedMemory.appErrors = [];
         this.tableService.getAllTables();
     };
     RestaurantTableComponent.prototype.onSelected = function (event) {
-        console.log(event);
+        this.sharedMemory.appErrors = [];
         this.setSelectedTableById(event.getElementId());
     };
     RestaurantTableComponent.prototype.setSelectedTableById = function (id) {
@@ -51,9 +52,11 @@ var RestaurantTableComponent = (function () {
         }
     };
     RestaurantTableComponent.prototype.onNewTable = function () {
+        this.sharedMemory.appErrors = [];
         this.selectedTable = new IDto_1.RestaurantTable(null);
     };
     RestaurantTableComponent.prototype.onSaveTable = function () {
+        this.sharedMemory.appErrors = [];
         if (this.selectedTable.id == 0) {
             this.tableService.createNewTable(this.selectedTable);
         }
@@ -127,7 +130,7 @@ var RestaurantTableComponent = (function () {
         }),
         angular2_1.View({
             templateUrl: './app/view/RestaurantTables.html',
-            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, SortingTable_1.SortingTable]
+            directives: [angular2_1.CORE_DIRECTIVES, angular2_1.FORM_DIRECTIVES, CustomTable_1.CustomTable]
         }), 
         __metadata('design:paramtypes', [TablesService_1.TablesService, SharedMemory_1.SharedMemory])
     ], RestaurantTableComponent);
